@@ -12,15 +12,24 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+    protected $primaryKey = 'userID';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
+        'birth_date',
+        'address',
         'email',
         'password',
+        'role',
+        'phone_number',
+        'profile_image',
+        'description'
     ];
 
     /**
@@ -44,5 +53,25 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function driver()
+    {
+        return $this->hasOne(Driver::class, 'userID');
+    }
+
+    public function employee()
+    {
+        return $this->hasOne(Employee::class, 'userID');
+    }
+
+    public function Manager()
+    {
+        return $this->hasOne(Manager::class, 'userID');
+    }
+
+    public function createdMissions()
+    {
+        return $this->hasMany(Mission::class, 'created_by');
     }
 }
