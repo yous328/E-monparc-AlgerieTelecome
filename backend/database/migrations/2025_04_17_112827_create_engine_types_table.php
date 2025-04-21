@@ -13,9 +13,13 @@ return new class extends Migration
     {
         Schema::create('engine_types', function (Blueprint $table) {
             $table->id('engineTypeID');
+            $table->foreignId('brandID')->constrained('vehicle_brands', 'brandID')->onDelete('cascade');
             $table->string('name');
+            $table->string('capacity');
+            $table->foreignId('fuelTypeID')->constrained('fuel_types', 'fuelTypeID')->onDelete('cascade');
             $table->timestamps();
-        });        
+        });
+        
     }
 
     /**

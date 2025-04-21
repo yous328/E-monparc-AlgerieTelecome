@@ -24,11 +24,17 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'first_name' => $this->faker->firstName(),
+            'last_name' => $this->faker->lastName(),
+            'birth_date' => $this->faker->date('Y-m-d', '2000-01-01'),
+            'address' => $this->faker->address(),
+            'phone_number' => '+213 ' . $this->faker->numerify('5## ## ## ##'),
+            'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
+            'password' => bcrypt('password'),
+            'role' => 'Admin', // or Driver/Employee dynamically in Seeder
+            'profile_image' => null,
+            'description' => $this->faker->sentence(),
         ];
     }
 
