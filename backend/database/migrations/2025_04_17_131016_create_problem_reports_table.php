@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->foreignId('reported_by')->constrained('users', 'id')->onDelete('cascade'); // Users uses default 'id'
             $table->foreignId('vehicleID')->nullable()->constrained('vehicles', 'vehicleID')->onDelete('set null');
             $table->foreignId('missionID')->nullable()->constrained('missions', 'missionID')->onDelete('set null');
-            $table->foreignId('maintenanceID')->nullable()->constrained('vehicle_maintenance', 'maintenanceID')->onDelete('set null');
+            $table->foreignId('maintenanceID')->nullable()->constrained('vehicle_maintenances', 'maintenanceID')->onDelete('set null');
             $table->foreignId('problem_type_id')->nullable()->constrained('problem_types', 'problemTypeID')->onDelete('set null');
     
             // Problem details (unchanged)

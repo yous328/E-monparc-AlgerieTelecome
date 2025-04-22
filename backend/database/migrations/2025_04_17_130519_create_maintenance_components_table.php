@@ -10,7 +10,7 @@ return new class extends Migration {
             $table->id('componentID');
             
             // Explicitly reference custom primary keys
-            $table->foreignId('maintenanceID')->constrained('vehicle_maintenance', 'maintenanceID')->onDelete('cascade');
+            $table->foreignId('maintenanceID')->constrained('vehicle_maintenances', 'maintenanceID')->onDelete('cascade');
             $table->foreignId('typeID')->constrained('maintenance_types', 'maintenanceTypeID')->onDelete('cascade');
         
             $table->date('inspection_date');

@@ -15,4 +15,3 @@ class Color extends Model
         return $this->hasMany(Vehicle::class, 'colorID');
     }
 }
-

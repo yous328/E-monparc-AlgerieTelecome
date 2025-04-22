@@ -4,8 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\VehicleBrand;
-use App\Models\EngineType;
-use App\Models\FuelType;
 
 class VehicleBrandSeeder extends Seeder
 {

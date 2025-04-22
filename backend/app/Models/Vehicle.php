@@ -70,7 +70,7 @@ class Vehicle extends Model
 
     public function maintenance()
     {
-        return $this->belongsTo(VehicleMaintenance::class, 'maintenanceID');
+        return $this->hasOne(VehicleMaintenance::class, 'vehicleID', 'vehicleID');
     }
 
     public function missions()

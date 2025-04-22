@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->foreignId('vehicleID')->nullable()->constrained('vehicles', 'vehicleID')->onDelete('set null');
             $table->foreignId('missionID')->nullable()->constrained('missions', 'missionID')->onDelete('set null');
             $table->foreignId('problemID')->nullable()->constrained('problem_reports', 'problemID')->onDelete('set null');
-            $table->foreignId('maintenanceID')->nullable()->constrained('vehicle_maintenance', 'maintenanceID')->onDelete('set null');
+            $table->foreignId('maintenanceID')->nullable()->constrained('vehicle_maintenances', 'maintenanceID')->onDelete('set null');
 
             // Notification data
             $table->string('title');

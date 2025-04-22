@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             VehicleTypeSeeder::class,
             ColorSeeder::class,
             VehicleBrandSeeder::class,
+            VehicleMaintenanceSeeder::class,
             EngineTypeSeeder::class,
             ManagerSeeder::class,
             DriverSeeder::class,
