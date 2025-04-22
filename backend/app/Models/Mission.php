@@ -25,6 +25,7 @@ class Mission extends Model
         'status',
         'missionObjectiveID',
         'description',
+        'created_by'
     ];
 
     // Relationships
@@ -44,6 +45,11 @@ class Mission extends Model
         return $this->belongsTo(Employee::class, 'accompanyingEmployeeID');
     }
 
+    public function accompanyingEmployees()
+    {
+        return $this->belongsToMany(Employee::class, 'mission_employee_accompaniments', 'missionID', 'employeeID');
+    }
+
     public function missionType()
     {
         return $this->belongsTo(MissionType::class, 'missionTypeID');
@@ -55,7 +61,8 @@ class Mission extends Model
     }
 
     public function createdBy()
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
+{
+    return $this->belongsTo(User::class, 'created_by', 'id');
+}
+
 }

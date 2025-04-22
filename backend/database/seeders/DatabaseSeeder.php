@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
             DriverSeeder::class,
             EmployeeSeeder::class,
             MissionSeeder::class,
+            MissionPlanSeeder::class,
+            EmployeeAccompanimentSeeder::class,
         ]);
     }
 }

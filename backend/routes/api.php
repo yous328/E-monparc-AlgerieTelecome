@@ -8,6 +8,10 @@ use App\Http\Controllers\Api\Admin\Vehicles\VehicleController;
 use App\Http\Controllers\Api\Admin\Vehicles\VehicleFormDataController;
 use App\Http\Controllers\Api\Admin\Vehicles\VehicleMaintenanceController;
 use App\Http\Controllers\Api\Admin\Vehicles\VehicleBreakdownController;
+use App\Http\Controllers\Api\Admin\Missions\MissionFormDataController;
+use App\Http\Controllers\Api\Admin\Missions\MissionPlanController;
+use App\Http\Controllers\Api\Admin\Missions\MissionController;
+use App\Http\Controllers\Api\Admin\Missions\Dashboard\MissionDashboardStatsController;
 
 // 🔐 Default auth route to get user (can leave as-is)
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
@@ -16,7 +20,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 // 🔒 Protected routes (for Admin dashboard) - DISABLED while testing
 
-Route::middleware(['auth:sanctum', 'role:Admin'])->prefix('admin')->group(function () {
+/*Route::middleware(['auth:sanctum', 'role:Admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
     Route::prefix('vehicles')->group(function () {
@@ -32,7 +36,31 @@ Route::middleware(['auth:sanctum', 'role:Admin'])->prefix('admin')->group(functi
         Route::get('/{id}/breakdowns', [VehicleBreakdownController::class, 'index']);
         Route::post('/{id}/breakdowns', [VehicleBreakdownController::class, 'store']);
     });
-});
+
+    Route::middleware(['auth:sanctum', 'role:Admin'])->prefix('admin')->group(function () {
+        Route::prefix('missions')->group(function () {
+            Route::get('/form/data', [MissionFormDataController::class, 'index']);
+            Route::get('/plans', [MissionPlanController::class, 'index']);
+            Route::post('/plans', [MissionPlanController::class, 'store']);
+            Route::get('/', [MissionController::class, 'index']);
+            Route::post('/', [MissionController::class, 'store']);
+            Route::get('/{id}', [MissionController::class, 'show']);
+            Route::get('/stats', [MissionDashboardStatsController::class, 'index']);
+        });
+    });    
+});*/
+
+
+    Route::prefix('missions')->group(function () {
+        Route::get('/form/data', [MissionFormDataController::class, 'index']);
+        Route::get('/plans', [MissionPlanController::class, 'index']);
+        Route::post('/plans', [MissionPlanController::class, 'store']);
+        Route::get('/stats', [MissionDashboardStatsController::class, 'index']);
+        Route::get('/', [MissionController::class, 'index']);
+        Route::post('/', [MissionController::class, 'store']);
+        Route::get('/{id}', [MissionController::class, 'show']);
+        
+    });
 
 
 

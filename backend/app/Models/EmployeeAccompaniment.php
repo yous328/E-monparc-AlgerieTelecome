@@ -12,11 +12,11 @@ class EmployeeAccompaniment extends Model
     protected $primaryKey = 'accompanimentID';
 
     protected $fillable = [
-        'userID'
+        'employee_accompaniment_id'
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'userID');
+        return $this->belongsTo(Employee::class, 'employeeID');
     }
 }
