@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\Admin\Dashboard\DashboardController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
@@ -9,6 +10,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 // Admin-only routes (Web platform)
 Route::middleware(['auth:sanctum', 'role:Admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index']);
     
 });
 

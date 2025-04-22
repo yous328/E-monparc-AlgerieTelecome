@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class MissionType extends Model
 {
@@ -11,7 +11,7 @@ class MissionType extends Model
 
     protected $primaryKey = 'missionTypeID';
 
-    protected $fillable = ['name'];
+    protected $fillable = ['category', 'name'];
 
     public function missions()
     {

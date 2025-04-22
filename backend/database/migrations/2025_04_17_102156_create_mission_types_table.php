@@ -8,9 +8,11 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('mission_types', function (Blueprint $table) {
             $table->id('missionTypeID');
-            $table->string('name');
+            $table->enum('category', ['Internal', 'External']);
+            $table->enum('name', ['Heavy', 'Light']);           
             $table->timestamps();
         });
+        
     }
 
     public function down(): void {

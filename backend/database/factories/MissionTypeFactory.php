@@ -17,7 +17,8 @@ class MissionTypeFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->randomElement(['Regular', 'Urgent', 'Night', 'Multi-day']),
+            'category' => $this->faker->randomElement(['Internal', 'External']),
+            'name' => $this->faker->randomElement(['Heavy', 'Light']),
         ];
     }
 }

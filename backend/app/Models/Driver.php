@@ -14,11 +14,11 @@ class Driver extends Model
     protected $fillable = [
         'userID',
         'license_number',
-        'is_available'
+        'status'
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'userID');
+        return $this->belongsTo(User::class, 'userID', 'id');
     }
 }

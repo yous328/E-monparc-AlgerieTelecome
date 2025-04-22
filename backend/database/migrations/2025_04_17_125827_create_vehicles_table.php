@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->foreignId('engineTypeID')->constrained('engine_types', 'engineTypeID')->onDelete('cascade');
             $table->foreignId('fuelTypeID')->constrained('fuel_types', 'fuelTypeID')->onDelete('cascade');
             $table->foreignId('colorID')->constrained('colors', 'colorID')->onDelete('cascade');
+            $table->enum('status', ['Available', 'Occupied', 'In Breakdown'])->default('Available');
             $table->foreignId('serviceID')->constrained('services', 'serviceID')->onDelete('cascade');
 
             $table->integer('mileage');

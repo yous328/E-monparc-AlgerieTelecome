@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Http\Controllers\Api\Admin\Dashboard;
+
+use App\Models\Driver;
+
+use App\Http\Controllers\Controller;
+
+class DriverStatsController extends Controller
+{
+    public static function getStats(): array
+    {
+        return [
+            'available' => Driver::where('status', 'Available')->count(),
+            'on_mission' => Driver::where('status', 'On Mission')->count(),
+            'unavailable' => Driver::where('status', 'Unavailable')->count(),
+        ];
+    }
+}

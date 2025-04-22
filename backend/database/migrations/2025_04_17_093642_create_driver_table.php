@@ -10,7 +10,7 @@ return new class extends Migration {
             $table->id('driverID');
             $table->foreignId('userID')->constrained('users')->onDelete('cascade');
             $table->string('license_number');
-            $table->boolean('is_available')->default(true);
+            $table->enum('status', ['Available', 'On Mission', 'Unavailable'])->default('Available');
             $table->timestamps();
         });
     }

@@ -18,7 +18,7 @@ class DriverFactory extends Factory
         return [
             'userID' => User::factory()->state(['role' => 'Driver']),
             'license_number' => 'DZ-' . $this->faker->numerify('######'),
-            'is_available' => true
+            'status' => $this->faker->randomElement(['Available', 'On Mission', 'Unavailable']),
         ];
     }
 }

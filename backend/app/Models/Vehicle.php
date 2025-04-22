@@ -18,6 +18,7 @@ class Vehicle extends Model
         'engineTypeID',
         'fuelTypeID',
         'colorID',
+        'status',
         'serviceID',
         'mileage',
         'vehicleInsuranceID',
