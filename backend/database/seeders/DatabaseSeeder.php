@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             VehicleMaintenanceSeeder::class,
             EngineTypeSeeder::class,
             ManagerSeeder::class,
+            LicenseTypeSeeder::class,
             DriverSeeder::class,
             EmployeeSeeder::class,
             MissionSeeder::class,

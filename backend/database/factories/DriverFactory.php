@@ -5,6 +5,8 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\User;
 use App\Models\Driver;
+use App\Models\LicenseType;
+
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Driver>
@@ -18,7 +20,8 @@ class DriverFactory extends Factory
         return [
             'userID' => User::factory()->state(['role' => 'Driver']),
             'license_number' => 'DZ-' . $this->faker->numerify('######'),
-            'status' => $this->faker->randomElement(['Available', 'On Mission', 'Unavailable']),
+            'status' => $this->faker->randomElement(['Available', 'On Mission', 'Resting', 'Unavailable']),
+            'licenseTypeID' => LicenseType::factory(),
         ];
     }
 }
