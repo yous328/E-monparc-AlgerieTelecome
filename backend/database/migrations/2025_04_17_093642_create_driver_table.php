@@ -12,6 +12,10 @@ return new class extends Migration {
             $table->string('license_number');
             $table->foreignId('licenseTypeID')->constrained('license_types', 'licenseTypeID')->onDelete('cascade');
             $table->enum('status', ['Available', 'On Mission', 'Resting', 'Unavailable'])->default('Available');
+            $table->enum('work_type', ['full_time', 'part_time'])->default('full_time');
+            $table->date('last_mission_end')->nullable();
+            $table->date('rest_until')->nullable();
+            
             $table->timestamps();
         });
     }

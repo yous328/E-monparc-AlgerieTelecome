@@ -6,9 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Models\Mission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\Missions\MissionSchedulerService;
 
 class MissionController extends Controller
 {
+    protected MissionSchedulerService $scheduler;
+
+    public function __construct(MissionSchedulerService $scheduler)
+    {
+        $this->scheduler = $scheduler;
+    }
+
+    // Get all missions
     public function index()
     {
         return Mission::with([
@@ -21,6 +30,7 @@ class MissionController extends Controller
         ])->get();
     }
 
+    // Show one mission
     public function show($id)
     {
         $mission = Mission::with([
@@ -35,6 +45,7 @@ class MissionController extends Controller
         return response()->json($mission);
     }
 
+    // Store new mission using the scheduler
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -47,18 +58,19 @@ class MissionController extends Controller
             'departure_location' => 'required|string|max:255',
             'destination' => 'required|string|max:255',
             'mission_date' => 'required|date',
-            'mission_time' => 'required',
+            'mission_time' => 'required|date_format:H:i',
             'missionObjectiveID' => 'required|exists:mission_objectives,missionObjectiveID',
             'description' => 'nullable|string',
         ]);
 
-        // 👇 Add this line exactly like this
-        $validated['created_by'] = 1;
+        // You can use Auth::id() or hardcoded fallback (for testing)
+        $validated['created_by'] = /*Auth::id() ??*/ 1;
 
-        $mission = Mission::create($validated);
+        // Use the scheduler service to create mission + handle planning/availability
+        $mission = $this->scheduler->createScheduledMission($validated);
 
         return response()->json([
-            'message' => 'Mission created successfully',
+            'message' => 'Mission created and scheduled successfully ✅',
             'mission' => $mission
         ], 201);
     }

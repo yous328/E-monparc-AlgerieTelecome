@@ -4,26 +4,21 @@ namespace App\Http\Controllers\Api\Admin\Missions;
 
 use App\Http\Controllers\Controller;
 use App\Models\MissionPlan;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class MissionPlanController extends Controller
 {
-    public function index()
+    /**
+     *  View all mission plans (with related mission + driver info)
+     */
+    public function index(): JsonResponse
     {
-        return MissionPlan::with(['mission', 'driver'])->get();
-    }
+        $plans = MissionPlan::with([
+            'mission.vehicle',
+            'mission.missionObjective',
+            'driver.user',
+        ])->get();
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'missionID' => 'required|exists:missions,missionID',
-            'driverID' => 'required|exists:drivers,driverID',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
-            'mission_type' => 'required|in:short,long',
-            'complexity' => 'nullable|in:simple,medium,complex',
-        ]);
-
-        return MissionPlan::create($validated);
+        return response()->json($plans);
     }
 }
