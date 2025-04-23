@@ -31,7 +31,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 // 🔒 Admin Panel Routes
-/*Route::middleware(['auth:sanctum', 'role:Admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth:sanctum', 'role:Admin'])->prefix('admin')->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index']);
@@ -83,70 +83,17 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
         Route::put('/{id}', [DriverController::class, 'update']);    
         Route::delete('/{id}', [DriverController::class, 'destroy']); 
     });
-});*/
 
-
-
-    // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index']);
-
-    // Vehicle Management
-    Route::prefix('vehicles')->group(function () {
-        Route::get('/', [VehicleController::class, 'index']);
-        Route::post('/', [VehicleController::class, 'store']);
-
-        Route::get('/form/data', [VehicleFormDataController::class, 'index']);
-
-        Route::get('/{id}', [VehicleController::class, 'show']);
-
-        Route::get('/{id}/maintenance', [VehicleMaintenanceController::class, 'show']);
-        Route::post('/{id}/maintenance', [VehicleMaintenanceController::class, 'store']);
-
-        Route::get('/{id}/breakdowns', [VehicleBreakdownController::class, 'index']);
-        Route::post('/{id}/breakdowns', [VehicleBreakdownController::class, 'store']);
-    });
-
-    // Mission Management
-    Route::prefix('missions')->group(function () {
-        Route::get('/form/data', [MissionFormDataController::class, 'index']);
-        Route::get('/plans', [MissionPlanController::class, 'index']);
-        Route::post('/plans', [MissionPlanController::class, 'store']);
-        Route::get('/stats', [MissionDashboardStatsController::class, 'index']);
-        Route::get('/', [MissionController::class, 'index']);
-        Route::post('/', [MissionController::class, 'store']);
-        Route::get('/{id}', [MissionController::class, 'show']);
-    });
-
-    // Driver Management
-    Route::prefix('drivers')->group(function () {
-        // Full CRUD
-        Route::get('/', [DriverController::class, 'index']);         
-        Route::post('/', [DriverController::class, 'store']);        
-        
-        // List table - MOVED ABOVE DYNAMIC ROUTES
-        Route::get('/list', [DriverListController::class, 'index']);
-    
-        // Filtering
-        Route::get('/filter/availability', [DriverAvailabilityFilterController::class, 'index']);
-        Route::get('/filter/license-type', [DriverLicenseTypeFilterController::class, 'index']);
-    
-        // Dashboard stats
-        Route::get('/stats', [DriverStatsController::class, 'index']);
-    
-        // Dynamic CRUD routes - PLACED AFTER SPECIFIC ROUTES
-        Route::get('/{id}', [DriverController::class, 'show']);      
-        Route::put('/{id}', [DriverController::class, 'update']);    
-        Route::delete('/{id}', [DriverController::class, 'destroy']); 
-    });
-
+    // Employee Management
     Route::prefix('employees')->group(function () {
-        Route::get('/', [EmployeeController::class, 'index']);       // List all employees
-        Route::post('/', [EmployeeController::class, 'store']);      // Create employee
-        Route::get('/{id}', [EmployeeController::class, 'show']);    // View employee
-        Route::put('/{id}', [EmployeeController::class, 'update']);  // Update employee
-        Route::delete('/{id}', [EmployeeController::class, 'destroy']); // Delete employee
+        Route::get('/', [EmployeeController::class, 'index']);
+        Route::post('/', [EmployeeController::class, 'store']);      
+        Route::get('/{id}', [EmployeeController::class, 'show']);    
+        Route::put('/{id}', [EmployeeController::class, 'update']);  
+        Route::delete('/{id}', [EmployeeController::class, 'destroy']); 
     });
-    
+});
+
 
 // 📱 Driver mobile routes (for later)
 /*
