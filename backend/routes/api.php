@@ -15,11 +15,11 @@ use App\Http\Controllers\Api\Admin\Missions\MissionPlanController;
 use App\Http\Controllers\Api\Admin\Missions\MissionController;
 use App\Http\Controllers\Api\Admin\Missions\Dashboard\MissionDashboardStatsController;
 
-use App\Http\Controllers\Api\Admin\Accounts\DriverController;
-use App\Http\Controllers\Api\Admin\Accounts\DriverListController;
-use App\Http\Controllers\Api\Admin\Accounts\Dashboard\DriverStatsController;
-use App\Http\Controllers\Api\Admin\Accounts\Filters\DriverAvailabilityFilterController;
-use App\Http\Controllers\Api\Admin\Accounts\Filters\DriverLicenseTypeFilterController;
+use App\Http\Controllers\Api\Admin\Drivers\DriverController;
+use App\Http\Controllers\Api\Admin\Drivers\DriverListController;
+use App\Http\Controllers\Api\Admin\Drivers\Dashboard\DriverStatsController;
+use App\Http\Controllers\Api\Admin\Drivers\Filters\DriverAvailabilityFilterController;
+use App\Http\Controllers\Api\Admin\Drivers\Filters\DriverLicenseTypeFilterController;
 
 use App\Http\Controllers\Api\Admin\Employees\EmployeeController;
 
@@ -39,10 +39,10 @@ Route::middleware(['auth:sanctum', 'role:Admin'])->prefix('admin')->group(functi
     // Vehicle Management
     Route::prefix('vehicles')->group(function () {
         Route::get('/', [VehicleController::class, 'index']);
-        Route::get('/{id}', [VehicleController::class, 'show']);
         Route::post('/', [VehicleController::class, 'store']);
-
         Route::get('/form/data', [VehicleFormDataController::class, 'index']);
+
+        Route::get('/{id}', [VehicleController::class, 'show']);
 
         Route::get('/{id}/maintenance', [VehicleMaintenanceController::class, 'show']);
         Route::post('/{id}/maintenance', [VehicleMaintenanceController::class, 'store']);

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Admin\Accounts;
+namespace App\Http\Controllers\Api\Admin\Drivers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Driver;

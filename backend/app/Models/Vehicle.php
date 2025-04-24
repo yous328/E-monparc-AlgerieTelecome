@@ -25,6 +25,7 @@ class Vehicle extends Model
         'technicalControlID',
         'last_maintenance_date',
         'next_available_date',
+        'photo'
     ];
 
     // Smart availability check

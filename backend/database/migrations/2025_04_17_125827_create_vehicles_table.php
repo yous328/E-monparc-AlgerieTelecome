@@ -35,6 +35,8 @@ return new class extends Migration {
             $table->date('last_maintenance_date')->nullable();
             $table->date('next_available_date')->nullable();
 
+            $table->string('photo')->nullable();
+
             $table->timestamps();
         });
     }

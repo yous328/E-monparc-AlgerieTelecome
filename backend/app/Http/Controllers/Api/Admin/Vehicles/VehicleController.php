@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Admin\Vehicles;
 use App\Models\Vehicle;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class VehicleController extends Controller
 {
@@ -22,12 +23,24 @@ class VehicleController extends Controller
             'engineTypeID' => 'required|exists:engine_types,engineTypeID',
             'fuelTypeID' => 'required|exists:fuel_types,fuelTypeID',
             'colorID' => 'required|exists:colors,colorID',
-            'status' => 'required',
+            'status' => 'required|in:Available,On Mission,Under Maintenance,In Breakdown,Unavailable',
             'serviceID' => 'required|exists:services,serviceID',
             'mileage' => 'required|integer',
+            'last_maintenance_date' => 'nullable|date',
+            'next_available_date' => 'nullable|date',
+            'photo' => 'nullable|image',
         ]);
 
-        return Vehicle::create($validated);
+        if ($request->hasFile('photo')) {
+            $validated['photo'] = $request->file('photo')->store('vehicles', 'public');
+        }
+
+        $vehicle = Vehicle::create($validated);
+
+        return response()->json([
+            'message' => 'Vehicle created successfully.',
+            'vehicle' => $vehicle
+        ], 201);
     }
 
     public function show($id)
@@ -35,4 +48,3 @@ class VehicleController extends Controller
         return Vehicle::with(['brand', 'type', 'engine', 'fuelType', 'color', 'service', 'maintenance'])->findOrFail($id);
     }
 }
-

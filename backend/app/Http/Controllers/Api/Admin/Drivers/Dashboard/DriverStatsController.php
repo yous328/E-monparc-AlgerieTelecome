@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Admin\Accounts\Dashboard;
+namespace App\Http\Controllers\Api\Admin\Drivers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\Driver;

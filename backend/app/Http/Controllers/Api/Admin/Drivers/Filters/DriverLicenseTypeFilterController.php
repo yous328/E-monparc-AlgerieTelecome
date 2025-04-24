@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Api\Admin\Accounts\Filters;
+namespace App\Http\Controllers\Api\Admin\Drivers\Filters;
 
 use App\Http\Controllers\Controller;
 use App\Models\Driver;
 use Illuminate\Http\Request;
 
-class DriverAvailabilityFilterController extends Controller
+class DriverLicenseTypeFilterController extends Controller
 {
     public function index(Request $request)
     {
-        $status = $request->input('status');
+        $licenseTypeId = $request->input('license_type_id');
 
         $drivers = Driver::with(['user', 'licenseType'])
-            ->where('status', $status)
+            ->where('licenseTypeID', $licenseTypeId)
             ->get();
 
         return response()->json($drivers);
