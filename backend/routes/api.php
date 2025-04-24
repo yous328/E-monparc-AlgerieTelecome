@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Api\Auth\AuthController;
+
 use App\Http\Controllers\Api\Admin\Dashboard\DashboardController;
 
 use App\Http\Controllers\Api\Admin\Vehicles\VehicleController;
@@ -23,7 +25,10 @@ use App\Http\Controllers\Api\Admin\Drivers\Filters\DriverLicenseTypeFilterContro
 
 use App\Http\Controllers\Api\Admin\Employees\EmployeeController;
 
-
+Route::middleware('web')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
 
 // 🔐 Default user route
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
