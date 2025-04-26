@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Api\Admin\Auth;
+namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
-class AdminAuthController extends Controller
+class AuthController extends Controller
 {
     // Admin Login
     public function login(Request $request)
@@ -18,8 +19,8 @@ class AdminAuthController extends Controller
         ]);
 
         $user = User::where('email', $credentials['email'])
-                    ->where('role', 'Admin')
-                    ->first();
+            ->where('role', 'Admin')
+            ->first();
 
         if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             return response()->json([
@@ -46,10 +47,14 @@ class AdminAuthController extends Controller
     // Admin Logout
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $user = $request->user();
+
+        if ($user && $user->currentAccessToken()) {
+            $user->currentAccessToken()->delete();
+        }
 
         return response()->json([
-            'message' => 'Admin logged out successfully'
+            'message' => 'Logged out successfully'
         ]);
     }
 

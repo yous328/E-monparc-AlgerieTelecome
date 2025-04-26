@@ -14,7 +14,10 @@ class NotificationSeeder extends Seeder
     public function run(): void
     {
         $admin = User::where('role', 'Admin')->inRandomOrder()->first();
-        $driver = User::where('role', 'Driver')->inRandomOrder()->first();
+
+        if (!$admin) {
+            return; // If no Admin found, don't proceed.
+        }
 
         // Vehicle-related notification
         $vehicle = Vehicle::inRandomOrder()->first();
@@ -25,7 +28,7 @@ class NotificationSeeder extends Seeder
                 'status' => 'unread',
                 'related_type' => Vehicle::class,
                 'relatedID' => $vehicle->vehicleID,
-                'created_by' => $driver->id ?? $admin->id,
+                'created_by' => $admin->id, // Always the Admin who seeded
             ]);
         }
 
@@ -38,7 +41,7 @@ class NotificationSeeder extends Seeder
                 'status' => 'unread',
                 'related_type' => Mission::class,
                 'relatedID' => $mission->missionID,
-                'created_by' => $driver->id ?? $admin->id,
+                'created_by' => $admin->id,
             ]);
         }
 
@@ -51,7 +54,7 @@ class NotificationSeeder extends Seeder
                 'status' => 'unread',
                 'related_type' => Driver::class,
                 'relatedID' => $driverModel->driverID,
-                'created_by' => $driver->id ?? $admin->id,
+                'created_by' => $admin->id,
             ]);
         }
     }
