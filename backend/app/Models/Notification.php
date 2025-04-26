@@ -12,41 +12,27 @@ class Notification extends Model
     protected $primaryKey = 'notificationID';
 
     protected $fillable = [
-        'userID',
-        'vehicleID',
-        'missionID',
-        'problemID',
-        'maintenanceID',
         'title',
         'message',
-        'type',
         'status',
+        'related_type',
+        'relatedID',
+        'created_by'
     ];
 
-    // Relationships
-
-    public function user()
+    /**
+     * Get the model (Vehicle, Driver, etc.) that this notification is related to.
+     */
+    public function related()
     {
-        return $this->belongsTo(User::class, 'userID');
+        return $this->morphTo(__FUNCTION__, 'related_type', 'relatedID');
     }
 
-    public function vehicle()
+    /**
+     * Get the user who created the notification (Driver or System, not Admin).
+     */
+    public function sender()
     {
-        return $this->belongsTo(Vehicle::class, 'vehicleID');
-    }
-
-    public function mission()
-    {
-        return $this->belongsTo(Mission::class, 'missionID');
-    }
-
-    public function problem()
-    {
-        return $this->belongsTo(ProblemReport::class, 'problemID');
-    }
-
-    public function maintenance()
-    {
-        return $this->belongsTo(VehicleMaintenance::class, 'maintenanceID');
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

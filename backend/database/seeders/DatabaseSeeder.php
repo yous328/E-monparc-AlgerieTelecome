@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             MissionSeeder::class,
             MissionPlanSeeder::class,
             EmployeeAccompanimentSeeder::class,
+            NotificationSeeder::class
         ]);
     }
 }
