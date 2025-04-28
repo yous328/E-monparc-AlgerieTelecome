@@ -1,4 +1,4 @@
-import { useState, ReactNode } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import { AuthContext } from './CreateAuthContext';
 import { IAuthContext } from '../../interfaces/IAuthContext';
 import { IUser } from '../../interfaces/IUser';
@@ -10,19 +10,26 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUser] = useState<IUser | null>(null);
-    const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+    const [token, setToken] = useState<string | null>(null);
+
+    useEffect(() => {
+        const storedToken = localStorage.getItem('token');
+        if (storedToken) {
+            setToken(storedToken);
+            api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+        }
+    }, []);
 
     async function login(email: string, password: string) {
         try {
             const response = await api.post('/login', { email, password });
+            const { access_token, user } = response.data;
 
-            const { token, user } = response.data;
-
-            localStorage.setItem('token', token);
-            setToken(token);
+            localStorage.setItem('token', access_token);
+            setToken(access_token);
             setUser(user);
 
-            api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
         } catch (error: unknown) {
             if (error instanceof Error) {
                 console.error('Login failed:', error.message);
@@ -46,7 +53,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
             localStorage.removeItem('token');
             setToken(null);
             setUser(null);
-
             delete api.defaults.headers.common['Authorization'];
         }
     }
