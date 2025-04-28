@@ -1,10 +1,11 @@
-// src/App.tsx
-import { RouterProvider } from "react-router-dom";
-import { router } from "./router";
+import { AuthProvider } from '../src/context/auth/AuthProvider';
+import { AppRouter } from './router';
 
 function App() {
   return (
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <AppRouter />
+    </AuthProvider>
   );
 }
 
