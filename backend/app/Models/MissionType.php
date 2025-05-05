@@ -11,7 +11,7 @@ class MissionType extends Model
 
     protected $primaryKey = 'missionTypeID';
 
-    protected $fillable = ['category', 'name'];
+    protected $fillable = ['category', 'complexity'];
 
     public function missions()
     {

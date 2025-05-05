@@ -15,6 +15,7 @@ class ManagerSeeder extends Seeder
             'id' => '1',
             'first_name' => 'Amine',
             'last_name' => 'Bennacer',
+            'gender' => 'male',
             'birth_date' => '1990-04-10',
             'address' => 'Rue Hassiba Ben Bouali, Alger',
             'phone_number' => '+213 555 66 77 88',

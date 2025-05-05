@@ -17,11 +17,20 @@ class CurrentMissionsController extends Controller
             ->get()
             ->map(function ($mission) {
                 return [
-                    'vehicle' => $mission->vehicle->registration_number ?? 'N/A',
-                    'driver' => $mission->driver->user->name ?? 'N/A',
-                    'type' => $mission->type->name ?? 'Transport',
+                    'vehicle' => $mission->vehicle->brand->name ?? 'N/A',
+
+                    'driver' => isset($mission->driver->user)
+                        ? $mission->driver->user->first_name . ' ' . $mission->driver->user->last_name
+                        : 'N/A',
+
+                    'type' => isset($mission->missionType)
+                        ? $mission->missionType->category . '/' . $mission->missionType->complexity
+                        : 'N/A',
+
                     'departure' => $mission->departure_location,
+
                     'arrival' => $mission->destination,
+                    
                     'localisation' => 'VOL-' . rand(100000, 999999),
                     'progress' => rand(60, 90),
                 ];

@@ -7,10 +7,6 @@ use App\Models\User;
 use App\Models\Driver;
 use App\Models\LicenseType;
 
-
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Driver>
- */
 class DriverFactory extends Factory
 {
     protected $model = Driver::class;

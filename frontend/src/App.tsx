@@ -1,5 +1,6 @@
-import { AuthProvider } from '../src/context/auth/AuthProvider';
-import { AppRouter } from '../src/router/AppRouter';
+// src/App.tsx
+import { AuthProvider } from './context/auth/AuthProvider';
+import { AppRouter } from './router/AppRouter';
 
 function App() {
   return (

@@ -3,8 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+use Database\Factories\Providers\AlgerianNameProvider;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -23,9 +22,16 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+
+        $faker = $this->faker;
+        $faker->addProvider(new AlgerianNameProvider($faker));
+
+        $gender = $this->faker->randomElement(['male', 'female']);
+
         return [
-            'first_name' => $this->faker->firstName(),
-            'last_name' => $this->faker->lastName(),
+            'first_name' => $faker->algerianFirstName($gender),
+            'last_name'  => $faker->algerianLastName(),
+            'gender'     => $gender,
             'birth_date' => $this->faker->date('Y-m-d', '2000-01-01'),
             'address' => $this->faker->address(),
             'phone_number' => '+213 ' . $this->faker->numerify('5## ## ## ##'),
@@ -43,7 +49,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }

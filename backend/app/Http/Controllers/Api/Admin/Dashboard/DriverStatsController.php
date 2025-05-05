@@ -11,6 +11,7 @@ class DriverStatsController extends Controller
     public static function getStats(): array
     {
         return [
+            'total' => Driver::count(),
             'available' => Driver::where('status', 'Available')->count(),
             'on_mission' => Driver::where('status', 'On Mission')->count(),
             'unavailable' => Driver::where('status', 'Unavailable')->count(),

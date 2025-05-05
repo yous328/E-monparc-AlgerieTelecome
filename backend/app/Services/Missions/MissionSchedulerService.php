@@ -8,52 +8,46 @@ use App\Models\Mission;
 use App\Models\MissionPlan;
 use App\Models\Vehicle;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class MissionSchedulerService
 {
     public function createScheduledMission(array $data)
     {
-        // 1. Create the mission
-        $mission = Mission::create($data);
+        return DB::transaction(function () use ($data) {
+            // 1. Create the mission
+            $mission = Mission::create($data);
 
-        // 2. Update vehicle status to 'Occupied'
-        $vehicle = $mission->vehicle;
-        $vehicle->status = 'On Mission';
-        $vehicle->save();
+            // 2. Calculate mission duration
+            $startDate = $mission->mission_date;
+            $endDate = $mission->estimated_end_date ?? $startDate;
+            $duration = $this->calculateMissionDuration($startDate, $endDate);
+            $type = $duration > 1 ? 'long' : 'short';
 
-        // 3. Update driver status to 'On Mission'
-        $driver = $mission->driver;
-        $driver->status = 'On Mission';
-        $driver->save();
+            // 3. Create the mission plan immediately
+            MissionPlan::create([
+                'missionID' => $mission->missionID,
+                'driverID' => $mission->driverID,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'mission_type' => $type,
+                'complexity' => $mission->complexity,
+            ]);
 
-        // 4. If there's an accompanying employee, mark as unavailable
-        if ($mission->accompanyingEmployee) {
-            $employee = $mission->accompanyingEmployee;
-            $employee->status = 'On Mission'; // or 'Unavailable'
-            $employee->save();
-        }
+            // 4. Update vehicle, driver, and accompanying employee statuses
+            $this->scheduleVehicleAvailability($mission->vehicle, false);
+            $this->scheduleDriverAvailability($mission->driver, false);
 
-        // 5. Calculate mission duration
-        $startDate = $mission->mission_date;
-        $endDate = $mission->estimated_end_date ?? $startDate;
+            if ($mission->accompanyingEmployee) {
+                $this->scheduleEmployeeAvailability($mission->accompanyingEmployee, false);
+            }
 
-        $duration = $this->calculateMissionDuration($startDate, $endDate);
-        $type = $duration > 1 ? 'long' : 'short';
+            // 5. Schedule driver rest days after the mission ends
+            $this->scheduleDriverRestDays($mission->driver, $endDate, $type);
 
-        // 6. Create mission plan
-        $plan = MissionPlan::create([
-            'missionID' => $mission->missionID,
-            'driverID' => $mission->driverID,
-            'start_date' => $startDate,
-            'end_date' => $endDate,
-            'mission_type' => $type,
-            'complexity' => $mission->complexity,
-        ]);
-
-        // 7. Schedule recovery days (for driver)
-        $this->scheduleDriverRestDays($mission->driver, $endDate, $type);
-
-        return $mission->load(['vehicle', 'driver', 'missionType', 'missionObjective']);
+            // 6. Return the loaded mission with relationships
+            return $mission->load(['vehicle', 'driver', 'missionType', 'missionObjective']);
+        });
     }
 
     protected function calculateMissionDuration($start, $end): int
@@ -66,16 +60,22 @@ class MissionSchedulerService
         $driver->status = 'Resting';
         $driver->save();
 
-        // Future logic: insert into rest_periods table with logic per driver type
+        // 🧠 Future logic: insert into rest_periods table based on driver type and mission duration
     }
 
-    protected function scheduleVehicleAvailability(Vehicle $vehicle, $isAvailable = false): void
+    protected function scheduleVehicleAvailability(Vehicle $vehicle, bool $isAvailable = false): void
     {
         $vehicle->status = $isAvailable ? 'Available' : 'On Mission';
         $vehicle->save();
     }
 
-    protected function scheduleEmployeeAvailability(?Employee $employee, $isAvailable = false): void
+    protected function scheduleDriverAvailability(Driver $driver, bool $isAvailable = false): void
+    {
+        $driver->status = $isAvailable ? 'Available' : 'On Mission';
+        $driver->save();
+    }
+
+    protected function scheduleEmployeeAvailability(?Employee $employee, bool $isAvailable = false): void
     {
         if ($employee) {
             $employee->status = $isAvailable ? 'Available' : 'On Mission';

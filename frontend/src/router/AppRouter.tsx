@@ -1,27 +1,32 @@
+// src/router/AppRouter.tsx
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { LoginPage } from '../pages/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
-import { useAuth } from '../context/auth/useAuth';
+import { ProtectedRoute } from '../components/ProtectedRoute';
+
+import { DashboardProvider } from '../context/Dashboard/DashboardProvider';
 
 export function AppRouter() {
-    const { isAuthenticated } = useAuth();
-
     return (
         <Routes>
-            {/* Public Routes */}
+            {/* Public routes */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<LoginPage />} />
 
-            {/* Protected Routes */}
-            {isAuthenticated ? (
-                <>
-                    <Route path="/dashboard" element={<DashboardPage />} />
-                </>
-            ) : (
-                <>
-                    {/* Redirect any unknown route to login if not authenticated */}
-                    <Route path="*" element={<Navigate to="/login" replace />} />
-                </>
-            )}
+            {/* Protected dashboard route */}
+            <Route
+                path="/dashboard"
+                element={
+                    <ProtectedRoute>
+                        <DashboardProvider>
+                            <DashboardPage />
+                        </DashboardProvider>
+                    </ProtectedRoute>
+                }
+            />
+
+            {/* Catch-all redirect */}
+            <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
     );
 }

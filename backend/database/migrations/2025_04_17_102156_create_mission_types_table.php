@@ -9,7 +9,7 @@ return new class extends Migration {
         Schema::create('mission_types', function (Blueprint $table) {
             $table->id('missionTypeID');
             $table->enum('category', ['Internal', 'External']);
-            $table->enum('name', ['Heavy', 'Light']);           
+            $table->enum('complexity', ['Heavy', 'Light']);           
             $table->timestamps();
         });
         

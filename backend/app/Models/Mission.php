@@ -16,7 +16,6 @@ class Mission extends Model
         'driverID',
         'accompanyingEmployeeID',
         'missionTypeID',
-        'complexity',
         'estimated_end_date',
         'departure_location',
         'destination',
@@ -25,10 +24,8 @@ class Mission extends Model
         'status',
         'missionObjectiveID',
         'description',
-        'created_by'
+        'created_by',
     ];
-
-    // Relationships
 
     public function vehicle()
     {
@@ -61,8 +58,7 @@ class Mission extends Model
     }
 
     public function createdBy()
-{
-    return $this->belongsTo(User::class, 'created_by', 'id');
-}
-
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id');
+    }
 }

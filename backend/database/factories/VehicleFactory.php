@@ -22,7 +22,7 @@ class VehicleFactory extends Factory
             ?? FuelType::create(['name' => 'Petrol'])->fuelTypeID;
 
         return [
-            'registration_number' => strtoupper($this->faker->bothify('###-??-16')),
+            'registration_number' => strtoupper($this->faker->unique()->bothify('###-??-16')),
 
             'brandID' => $brandID,
 

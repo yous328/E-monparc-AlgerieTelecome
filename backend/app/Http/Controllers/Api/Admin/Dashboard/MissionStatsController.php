@@ -12,9 +12,9 @@ class MissionStatsController extends Controller
     {
         return [
             'total' => Mission::count(),
+            'canceled' => Mission::where('status', 'canceled')->count(),
             'ongoing' => Mission::where('status', 'in_progress')->count(),
-            'scheduled' => Mission::where('status', 'programmed')->count(),
-            'cancelled' => Mission::where('status', 'cancelled')->count(),
+            'scheduled' => Mission::where('status', 'not_started_yet')->count(),
         ];
     }
 }

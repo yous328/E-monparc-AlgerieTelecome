@@ -21,7 +21,6 @@ class MissionFactory extends Factory
         $isLong = rand(0, 1);
         $duration = $isLong ? rand(2, 3) : 1;
 
-        // Ensure fallback relationships are valid
         $vehicle = Vehicle::inRandomOrder()->first() ?? Vehicle::factory()->create();
         $driver = Driver::inRandomOrder()->first() ?? Driver::factory()->create();
         $employee = Employee::inRandomOrder()->first();
@@ -34,7 +33,6 @@ class MissionFactory extends Factory
             'driverID' => $driver->driverID,
             'accompanyingEmployeeID' => rand(0, 1) && $employee ? $employee->employeeID : null,
             'missionTypeID' => $missionType->missionTypeID,
-            'complexity' => $this->faker->randomElement(['simple', 'medium', 'complex']),
             'estimated_end_date' => $startDate->copy()->addDays($duration),
             'departure_location' => $this->faker->randomElement(['Alger', 'Tlemcen', 'Oran', 'Sétif', 'Bejaia']),
             'destination' => $this->faker->randomElement(['Annaba', 'Batna', 'Constantine', 'Blida']),
@@ -43,7 +41,7 @@ class MissionFactory extends Factory
             'missionObjectiveID' => $missionObjective->missionObjectiveID,
             'description' => $this->faker->sentence(),
             'created_by' => $admin->id,
-            'status' => $this->faker->randomElement(['pending', 'in_progress', 'completed']),
-        ];
+            'status' => $this->faker->randomElement(['pending', 'in_progress', 'canceled', 'completed', 'not_started_yet']),
+        ];        
     }
 }

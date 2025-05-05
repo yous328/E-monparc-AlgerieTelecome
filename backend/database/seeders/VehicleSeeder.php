@@ -2,16 +2,27 @@
 
 namespace Database\Seeders;
 
-use App\Models\Vehicle;
 use Illuminate\Database\Seeder;
+use App\Models\Vehicle;
 
 class VehicleSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        Vehicle::factory()->count(5)->create();
+        $totalVehicles = 1800;
+
+        $distribution = [
+            'On Mission'    => 0.5,
+            'Available'     => 0.3,
+            'In Breakdown'  => 0.2,
+        ];
+
+        foreach ($distribution as $status => $percentage) {
+            $count = (int) round($totalVehicles * $percentage);
+            Vehicle::factory()
+                ->count($count)
+                ->state(['status' => $status])
+                ->create();
+        }
     }
 }

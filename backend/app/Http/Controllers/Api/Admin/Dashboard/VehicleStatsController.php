@@ -11,9 +11,9 @@ class VehicleStatsController extends Controller
     {
         return [
             'total' => Vehicle::count(),
-            'available' => Vehicle::where('status', 'Available')->count(),
-            'occupied' => Vehicle::where('status', 'Occupied')->count(),
-            'maintenance' => Vehicle::where('status', 'In Breakdown')->count(),
+            'Available' => Vehicle::where('status', 'Available')->count(),
+            'occupied' => Vehicle::where('status', 'On Mission')->count(),
+            'in_breakdown' => Vehicle::where('status', 'In Breakdown')->count(),
         ];
     }
 }

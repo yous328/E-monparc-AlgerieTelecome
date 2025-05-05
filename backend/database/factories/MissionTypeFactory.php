@@ -2,23 +2,18 @@
 
 namespace Database\Factories;
 
+use App\Models\MissionType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\MissionType>
- */
 class MissionTypeFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = MissionType::class;
+
     public function definition(): array
     {
         return [
             'category' => $this->faker->randomElement(['Internal', 'External']),
-            'name' => $this->faker->randomElement(['Heavy', 'Light']),
+            'complexity' => $this->faker->randomElement(['Heavy', 'Light']),
         ];
     }
 }
