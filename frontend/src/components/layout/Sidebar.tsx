@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/auth/useAuth';
+import { useAuth } from '../../context/auth/useAuth';
 import { Home, Car, Map, Users, LogOut } from 'lucide-react';
 
 export function Sidebar() {

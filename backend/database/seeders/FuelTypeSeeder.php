@@ -9,10 +9,7 @@ class FuelTypeSeeder extends Seeder
 {
     public function run(): void
     {
-        $types = ['Petrol', 'Diesel', 'Hybrid', 'Electric', 'LPG'];
-
-        foreach ($types as $type) {
-            FuelType::firstOrCreate(['name' => $type]);
-        }
+        // Generate 5 random fuel types using the factory
+        FuelType::factory()->count(5)->create();
     }
 }

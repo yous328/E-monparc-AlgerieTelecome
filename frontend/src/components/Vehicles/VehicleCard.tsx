@@ -1,0 +1,84 @@
+import { IVehicle } from '../../interfaces/Vehicle/IVehicle';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
+import BuildIcon from '@mui/icons-material/Build';
+import PersonIcon from '@mui/icons-material/Person';
+
+interface VehicleCardProps {
+  vehicle: IVehicle;
+}
+
+export function VehicleCard({ vehicle }: VehicleCardProps) {
+  const getStatusStyle = () => {
+    switch (vehicle.status) {
+      case 'Disponible':
+        return 'bg-green-100 text-green-700 border border-green-400';
+      case 'Occupé':
+        return 'bg-blue-100 text-blue-700 border border-blue-400';
+      case 'En Panne':
+        return 'bg-red-100 text-red-700 border border-red-400';
+      default:
+        return 'bg-gray-100 text-gray-600';
+    }
+  };
+
+  // Safe defaults
+  const kilometers = vehicle.kilometers ?? 0;
+  const dailyCost = vehicle.dailyCost ?? 0;
+  const nextDue = vehicle.technicalStatus?.vidange?.next_due ?? 0;
+  const driver = vehicle.driver || 'Unassigned';
+
+  return (
+    <div className="bg-[#edf1f0] rounded-lg shadow border hover:shadow-md transition p-4 flex flex-col justify-between">
+
+      {/* Header */}
+      <div className="mb-3">
+        <h3 className="text-sm font-medium text-gray-700">
+          {vehicle.brand?.toUpperCase() || 'SANS MARQUE'}
+        </h3>
+        <p className="text-lg font-bold">{vehicle.registration || '---'}</p>
+      </div>
+
+      {/* Image */}
+      <div className="mb-4 flex justify-center">
+        <div className="h-16 w-16 bg-white rounded shadow flex items-center justify-center p-1">
+          <img
+            src={vehicle.imageUrl || '/fallback-vehicle.png'}
+            alt={`${vehicle.brand} logo`}
+            className="h-full w-full object-contain"
+          />
+        </div>
+      </div>
+
+      {/* Info Grid */}
+      <div className="grid grid-cols-2 gap-2 text-xs text-gray-700 mb-4">
+        <div className="flex items-center space-x-1">
+          <DirectionsCarIcon fontSize="small" className="text-gray-500" />
+          <span>{kilometers.toLocaleString()} KM</span>
+        </div>
+        <div className="flex items-center space-x-1">
+          <LocalGasStationIcon fontSize="small" className="text-gray-500" />
+          <span>{dailyCost.toLocaleString()} DA</span>
+        </div>
+        <div className="flex items-center space-x-1">
+          <BuildIcon fontSize="small" className="text-gray-500" />
+          <span>{nextDue.toLocaleString()} KM</span>
+        </div>
+        <div className="flex items-center space-x-1">
+          <PersonIcon fontSize="small" className="text-gray-500" />
+          <span>{driver}</span>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="flex justify-between items-center">
+        <span className={`px-2 py-1 rounded text-xs font-semibold ${getStatusStyle()}`}>
+          {vehicle.status}
+        </span>
+        <button className="text-xs font-semibold text-blue-600 border border-blue-600 px-3 py-1 rounded hover:bg-blue-50 transition">
+          Voir Détails
+        </button>
+      </div>
+    </div>
+  );
+}

@@ -2,55 +2,55 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 use Database\Factories\Providers\AlgerianNameProvider;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
+    protected static ?string $password = null;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
-
         $faker = $this->faker;
         $faker->addProvider(new AlgerianNameProvider($faker));
 
-        $gender = $this->faker->randomElement(['male', 'female']);
+        $gender = $faker->randomElement(['male', 'female']);
 
         return [
-            'first_name' => $faker->algerianFirstName($gender),
-            'last_name'  => $faker->algerianLastName(),
-            'gender'     => $gender,
-            'birth_date' => $this->faker->date('Y-m-d', '2000-01-01'),
-            'address' => $this->faker->address(),
-            'phone_number' => '+213 ' . $this->faker->numerify('5## ## ## ##'),
-            'email' => $this->faker->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => bcrypt('password'),
-            'role' => 'Admin', // or Driver/Employee dynamically in Seeder
-            'profile_image' => null,
-            'description' => $this->faker->sentence(),
+            'first_name'       => $faker->algerianFirstName($gender),
+            'last_name'        => $faker->algerianLastName(),
+            'gender'           => $gender,
+            'birth_date'       => $faker->date('Y-m-d', '2000-01-01'),
+            'address'          => $faker->address(),
+            'phone_number'     => '+213 ' . $faker->numerify('5## ## ## ##'),
+            'email'            => $this->faker->unique()->userName() . rand(1000, 99999) . '@example.com',
+            'email_verified_at'=> now(),
+            'password'         => static::$password ??= Hash::make('password'), // Caches the hash
+            'role'             => 'Admin', // Change dynamically in Seeder if needed
+            'profile_image'    => null,
+            'description'      => $faker->sentence(),
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
     public function unverified(): static
     {
         return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    /**
+     * Optional: Custom state for roles
+     */
+    public function role(string $role): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'role' => $role,
         ]);
     }
 }

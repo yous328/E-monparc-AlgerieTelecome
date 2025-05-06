@@ -12,7 +12,6 @@ class ManagerSeeder extends Seeder
     {
 
         $admin = User::create([
-            'id' => '1',
             'first_name' => 'Amine',
             'last_name' => 'Bennacer',
             'gender' => 'male',

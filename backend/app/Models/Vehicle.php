@@ -81,4 +81,13 @@ class Vehicle extends Model
     {
         return $this->hasMany(Mission::class, 'vehicleID');
     }
+    public function technicalStatus()
+    {
+        return $this->hasOne(VehicleTechnicalStatus::class, 'vehicleID');
+    }
+
+    public function usageHistory()
+    {
+        return $this->hasMany(VehicleUsageHistory::class, 'vehicleID');
+    }
 }

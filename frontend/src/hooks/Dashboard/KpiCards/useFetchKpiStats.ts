@@ -16,8 +16,6 @@ export function useFetchKpiStats() {
                     endpoints.map(endpoint => api.get(`admin/dashboard/stats/${endpoint}`))
                 );
 
-                console.log("Fetched KPI responses:", responses.map(r => r.data));
-
                 setKpiData({
                     vehicles: {
                         total: responses[0]?.data?.total || 0,

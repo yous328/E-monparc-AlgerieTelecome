@@ -2,18 +2,18 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { LoginPage } from '../pages/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
-import { ProtectedRoute } from '../components/ProtectedRoute';
-
+import { VehiclesPage } from '../pages/VehiclePage';
+import { ProtectedRoute } from '../components/utils/ProtectedRoute';
 import { DashboardProvider } from '../context/Dashboard/DashboardProvider';
 
 export function AppRouter() {
     return (
         <Routes>
-            {/* Public routes */}
+            {/* Public Routes */}
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<LoginPage />} />
 
-            {/* Protected dashboard route */}
+            {/* Protected Routes */}
             <Route
                 path="/dashboard"
                 element={
@@ -25,7 +25,18 @@ export function AppRouter() {
                 }
             />
 
-            {/* Catch-all redirect */}
+            <Route
+                path="/vehicles"
+                element={
+                    <ProtectedRoute>
+                        <DashboardProvider>
+                            <VehiclesPage />
+                        </DashboardProvider>
+                    </ProtectedRoute>
+                }
+            />
+
+            {/* Catch-all: redirect unknown routes */}
             <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
     );

@@ -9,20 +9,7 @@ class VehicleBrandSeeder extends Seeder
 {
     public function run(): void
     {
-        $brands = [
-            ['name' => 'Peugeot'],
-            ['name' => 'Renault'],
-            ['name' => 'Hyundai'],
-            ['name' => 'Toyota'],
-            ['name' => 'Dacia'],
-            ['name' => 'Volkswagen'],
-            ['name' => 'Kia'],
-            ['name' => 'Fiat'],
-            ['name' => 'Seat'],
-        ];
-
-        foreach ($brands as $brand) {
-            $brandModel = VehicleBrand::firstOrCreate(['name' => $brand['name']]);
-        }
+        // Create 10 random vehicle brands using the factory
+        VehicleBrand::factory()->count(10)->create();
     }
 }
