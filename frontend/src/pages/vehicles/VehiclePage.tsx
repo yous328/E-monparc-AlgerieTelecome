@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Layout } from '../layouts/MainLayout';
-import { VehiclesFilters } from '../components/Vehicles/VehicleFilters';
-import { VehicleList } from '../components/Vehicles/VehicleList';
-import { VehiclesProvider } from '../context/vehicle/VehiclesProvider';
+import { Layout } from '../../layouts/MainLayout';
+import { VehiclesFilters } from '../../components/Vehicles/ListingVehicles/VehicleFilters';
+import { VehicleList } from '../../components/Vehicles/ListingVehicles/VehicleList';
+import { VehiclesProvider } from '../../context/vehicle/VehiclesProvider';
 
 export function VehiclesPage() {
 

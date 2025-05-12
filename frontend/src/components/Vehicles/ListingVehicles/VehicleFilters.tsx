@@ -17,7 +17,7 @@ export function VehiclesFilters({ filters, setFilters }: VehiclesFiltersProps) {
             <select
                 value={filters.type}
                 onChange={(e) => setFilters((prev) => ({ ...prev, type: e.target.value }))}
-                className="p-2 rounded border bg-white text-sm text-gray-700 shadow-sm"
+                className="px-12 py-2 rounded border bg-[#edf1f0] text-sm text-gray-700 shadow-sm"
             >
                 <option value="">Filtrer par Type</option>
                 <option value="van">Van</option>
@@ -28,7 +28,7 @@ export function VehiclesFilters({ filters, setFilters }: VehiclesFiltersProps) {
             <select
                 value={filters.status}
                 onChange={(e) => setFilters((prev) => ({ ...prev, status: e.target.value }))}
-                className="p-2 rounded border bg-white text-sm text-gray-700 shadow-sm"
+                className="px-12 py-2 rounded border bg-[#edf1f0]  text-sm text-gray-700 shadow-sm"
             >
                 <option value="">Filtrer par Statut</option>
                 <option value="Disponible">Disponible</option>
@@ -39,7 +39,7 @@ export function VehiclesFilters({ filters, setFilters }: VehiclesFiltersProps) {
             <select
                 value={filters.assignment}
                 onChange={(e) => setFilters((prev) => ({ ...prev, assignment: e.target.value }))}
-                className="p-2 rounded border bg-white text-sm text-gray-700 shadow-sm"
+                className="px-8 py-2 rounded border bg-[#edf1f0] text-sm text-gray-700 shadow-sm"
             >
                 <option value="">Filtrer par Affectation</option>
                 <option value="affecté">Affecté</option>
@@ -47,7 +47,7 @@ export function VehiclesFilters({ filters, setFilters }: VehiclesFiltersProps) {
             </select>
 
             <div className="ml-auto">
-                <button className="px-4 py-2 bg-white border border-blue-500 text-blue-600 rounded hover:bg-blue-50 font-semibold text-sm">
+                <button className="px-4 py-2 bg-[#edf1f0] border text-black rounded shadow-md hover:bg-blue-50 font-semibold text-sm">
                     + Ajouter Nouveau Véhicule
                 </button>
             </div>

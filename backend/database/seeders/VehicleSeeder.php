@@ -12,9 +12,9 @@ class VehicleSeeder extends Seeder
         $totalVehicles = 1800;
 
         $distribution = [
-            'On Mission'    => 0.5,
+            'OnMission'    => 0.5,
             'Available'     => 0.3,
-            'In Breakdown'  => 0.2,
+            'InBreakdown'  => 0.2,
         ];
 
         foreach ($distribution as $status => $percentage) {

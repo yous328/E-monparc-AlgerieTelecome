@@ -3,12 +3,15 @@ import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
 import BuildIcon from '@mui/icons-material/Build';
 import PersonIcon from '@mui/icons-material/Person';
+import { useNavigate } from 'react-router-dom';
 
 interface VehicleCardProps {
   vehicle: IVehicle;
 }
 
 export function VehicleCard({ vehicle }: VehicleCardProps) {
+  const navigate = useNavigate();
+
   const getStatusStyle = () => {
     switch (vehicle.status) {
       case 'Disponible':
@@ -22,28 +25,24 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
     }
   };
 
-  // Safe defaults
-  const kilometers = vehicle.kilometers ?? 0;
-  const dailyCost = vehicle.dailyCost ?? 0;
-  const nextDue = vehicle.technicalStatus?.vidange?.next_due ?? 0;
-  const driver = vehicle.driver || 'Unassigned';
+  const handleDetailsClick = () => {
+    navigate(`/vehicles/${vehicle.id}`);
+  };
 
   return (
     <div className="bg-[#edf1f0] rounded-lg shadow border hover:shadow-md transition p-4 flex flex-col justify-between">
 
       {/* Header */}
       <div className="mb-3">
-        <h3 className="text-sm font-medium text-gray-700">
-          {vehicle.brand?.toUpperCase() || 'SANS MARQUE'}
-        </h3>
-        <p className="text-lg font-bold">{vehicle.registration || '---'}</p>
+        <h3 className="text-sm font-medium text-gray-700">{vehicle.brand.toUpperCase()}</h3>
+        <p className="text-lg font-bold">{vehicle.registration}</p>
       </div>
 
       {/* Image */}
       <div className="mb-4 flex justify-center">
         <div className="h-16 w-16 bg-white rounded shadow flex items-center justify-center p-1">
           <img
-            src={vehicle.imageUrl || '/fallback-vehicle.png'}
+            src={vehicle.brandLogo || '/fallback-vehicle.png'}
             alt={`${vehicle.brand} logo`}
             className="h-full w-full object-contain"
           />
@@ -51,22 +50,22 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
       </div>
 
       {/* Info Grid */}
-      <div className="grid grid-cols-2 gap-2 text-xs text-gray-700 mb-4">
+      <div className="grid grid-cols-2 gap-2 text-[10px] text-gray-700 mb-4">
         <div className="flex items-center space-x-1">
-          <DirectionsCarIcon fontSize="small" className="text-gray-500" />
-          <span>{kilometers.toLocaleString()} KM</span>
+          <DirectionsCarIcon style={{ fontSize: 11 }} className="text-gray-500" />
+          <span>{vehicle.kilometers.toLocaleString()} KM</span>
         </div>
         <div className="flex items-center space-x-1">
-          <LocalGasStationIcon fontSize="small" className="text-gray-500" />
-          <span>{dailyCost.toLocaleString()} DA</span>
+          <LocalGasStationIcon style={{ fontSize: 11 }} className="text-gray-500" />
+          <span>{vehicle.dailyCost.toLocaleString()} DA</span>
         </div>
         <div className="flex items-center space-x-1">
-          <BuildIcon fontSize="small" className="text-gray-500" />
-          <span>{nextDue.toLocaleString()} KM</span>
+          <BuildIcon style={{ fontSize: 11 }} className="text-gray-500" />
+          <span>{vehicle.vidangeNextDue.toLocaleString()} KM</span>
         </div>
         <div className="flex items-center space-x-1">
-          <PersonIcon fontSize="small" className="text-gray-500" />
-          <span>{driver}</span>
+          <PersonIcon style={{ fontSize: 11 }} className="text-gray-500" />
+          <span>{vehicle.driver || 'Unassigned'}</span>
         </div>
       </div>
 
@@ -75,7 +74,10 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
         <span className={`px-2 py-1 rounded text-xs font-semibold ${getStatusStyle()}`}>
           {vehicle.status}
         </span>
-        <button className="text-xs font-semibold text-blue-600 border border-blue-600 px-3 py-1 rounded hover:bg-blue-50 transition">
+        <button
+          onClick={handleDetailsClick}
+          className="text-xs font-semibold text-blue-600 border border-blue-600 px-3 py-1 rounded hover:bg-blue-50 transition"
+        >
           Voir Détails
         </button>
       </div>

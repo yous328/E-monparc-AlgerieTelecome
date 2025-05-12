@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->string('destination');
             $table->date('mission_date');
             $table->time('mission_time');
+            $table->decimal('distance_km', 8, 2)->nullable();
             $table->foreignId('missionObjectiveID')->constrained('mission_objectives', 'missionObjectiveID')->onDelete('cascade');
             $table->text('description')->nullable();
             $table->foreignId('created_by')->constrained('users', 'id')->onDelete('cascade');

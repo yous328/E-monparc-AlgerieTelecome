@@ -28,7 +28,7 @@ class DriverController extends Controller
             'password' => 'required|string|min:6',
             'licenseTypeID' => 'required|exists:license_types,licenseTypeID',
             'license_number' => 'required|string',
-            'status' => 'required|in:Available,On Mission,Resting,Unavailable',
+            'status' => 'required|in:Available,OnMission,Resting,Unavailable',
             'description' => 'nullable|string',
             'profile_image' => 'nullable|image',
         ]);
@@ -81,7 +81,7 @@ class DriverController extends Controller
             'email'          => 'sometimes|email|unique:users,email,' . $driver->user->id,
             'licenseTypeID'  => 'sometimes|exists:license_types,licenseTypeID',
             'license_number' => 'sometimes|string',
-            'status'         => 'sometimes|in:Available,On Mission,Resting,Unavailable',
+            'status'         => 'sometimes|in:Available,OnMission,Resting,Unavailable',
             'description'    => 'nullable|string',
             'profile_image'  => 'nullable|image|max:2048',
         ]);

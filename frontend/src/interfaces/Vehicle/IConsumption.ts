@@ -1,4 +1,4 @@
 export interface IConsumption {
-    label: string;
-    value: number;
+    average: string;
+    current: string;
 }

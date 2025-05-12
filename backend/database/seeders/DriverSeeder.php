@@ -12,7 +12,7 @@ class DriverSeeder extends Seeder
         $totalDrivers = 350;
 
         $distribution = [
-            'On Mission'   => 0.5,
+            'OnMission'   => 0.5,
             'Available'    => 0.3,
             'Unavailable'  => 0.2,
         ];

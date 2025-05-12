@@ -13,7 +13,7 @@ class DriverStatsController extends Controller
         return [
             'total' => Driver::count(),
             'available' => Driver::where('status', 'Available')->count(),
-            'on_mission' => Driver::where('status', 'On Mission')->count(),
+            'on_mission' => Driver::where('status', 'OnMission')->count(),
             'unavailable' => Driver::where('status', 'Unavailable')->count(),
         ];
     }

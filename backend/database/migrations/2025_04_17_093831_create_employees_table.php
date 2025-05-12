@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->foreignId('userID')->constrained('users')->onDelete('cascade');
 
             // New fields for intelligent scheduling
-            $table->enum('status', ['Available', 'On Mission', 'Resting', 'Unavailable'])->default('Available');
+            $table->enum('status', ['Available', 'OnMission', 'Resting', 'Unavailable'])->default('Available');
             $table->date('next_available_date')->nullable();
 
             $table->timestamps();

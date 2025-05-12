@@ -1,4 +1,6 @@
-import { createContext, useState, useCallback, ReactNode } from 'react';
+// src/context/vehicle/VehiclesProvider.tsx
+import { useState, useCallback, ReactNode } from 'react';
+import { VehiclesContext } from '../../context/vehicle/CreateVehiclesContext';
 import { IVehicle } from '../../interfaces/Vehicle/IVehicle';
 import { useFetchVehicles } from '../../hooks/Vehicle/useFetchVehicles';
 
@@ -8,28 +10,22 @@ interface Filters {
     assignment: string;
 }
 
-interface VehiclesContextType {
-    vehicles: IVehicle[];
-    loading: boolean;
-    error: string;
-    fetchVehicles: (filters: Filters) => Promise<void>;
-}
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const VehiclesContext = createContext<VehiclesContextType | undefined>(undefined);
-
 export function VehiclesProvider({ children }: { children: ReactNode }) {
     const [vehicles, setVehicles] = useState<IVehicle[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const { fetchVehicles: fetchRawVehicles } = useFetchVehicles();
 
-    const fetchVehicles = useCallback(async (filters: Filters) => {
+    const fetchVehicles = useCallback(async (filters: Filters, page: number = 1) => {
         try {
             setLoading(true);
             setError('');
-            const data = await fetchRawVehicles(filters);
-            setVehicles(data);
+            const { vehicles, currentPage, totalPages } = await fetchRawVehicles(filters, page);
+            setVehicles(vehicles);
+            setCurrentPage(currentPage);
+            setTotalPages(totalPages);
         } catch (err) {
             console.error(err);
             setError('Erreur lors du chargement des véhicules.');
@@ -39,7 +35,7 @@ export function VehiclesProvider({ children }: { children: ReactNode }) {
     }, [fetchRawVehicles]);
 
     return (
-        <VehiclesContext.Provider value={{ vehicles, loading, error, fetchVehicles }}>
+        <VehiclesContext.Provider value={{ vehicles, loading, error, currentPage, totalPages, fetchVehicles }}>
             {children}
         </VehiclesContext.Provider>
     );

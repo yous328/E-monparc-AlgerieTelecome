@@ -12,11 +12,14 @@ return new class extends Migration {
             $table->string('registration_number')->unique();
 
             $table->foreignId('brandID')->constrained('vehicle_brands', 'brandID')->onDelete('cascade');
+            $table->foreignId('modelID')->nullable()->constrained('vehicle_models', 'modelID')->onDelete('set null'); // Add this line safely
+
             $table->foreignId('vehicleTypeID')->constrained('vehicle_types', 'vehicleTypeID')->onDelete('cascade');
             $table->foreignId('engineTypeID')->constrained('engine_types', 'engineTypeID')->onDelete('cascade');
             $table->foreignId('fuelTypeID')->constrained('fuel_types', 'fuelTypeID')->onDelete('cascade');
             $table->foreignId('colorID')->constrained('colors', 'colorID')->onDelete('cascade');
-            $table->enum('status', ['Available', 'On Mission', 'Under Maintenance', 'In Breakdown', 'Unavailable'])->default('Available');
+
+            $table->enum('status', ['Available', 'OnMission', 'UnderMaintenance', 'InBreakdown', 'Unavailable'])->default('Available');
             $table->foreignId('serviceID')->constrained('services', 'serviceID')->onDelete('cascade');
 
             $table->integer('mileage');
@@ -28,9 +31,14 @@ return new class extends Migration {
 
             $table->foreignId('vehicleInsuranceID')->nullable()->constrained('vehicle_insurances', 'vehicleInsuranceID')->onDelete('set null');
             $table->foreignId('technicalControlID')->nullable()->constrained('technical_controls', 'technicalControlID')->onDelete('set null');
+
             $table->date('last_maintenance_date')->nullable();
             $table->date('next_available_date')->nullable();
             $table->string('photo')->nullable();
+
+            $table->json('monthly_kilometrage')->nullable();
+            $table->json('mission_stats')->nullable();
+            $table->json('consumption')->nullable();
 
             $table->timestamps();
         });

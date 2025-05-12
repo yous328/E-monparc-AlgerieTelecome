@@ -15,9 +15,19 @@ return new class extends Migration
             $table->id('technicalControlID');
             $table->date('control_date');
             $table->date('expiration_date');
-            $table->enum('status', ['Pending', 'Passed', 'Failed']);
+            $table->enum('status', [
+                'Neant',
+                'Ajourne',
+                'NonExigible',
+                'ControlePartiel',
+                'AttenteContreVisite',
+                'ObservationsMineures',
+                'NonControle',
+                'Exempte'
+            ]);
             $table->timestamps();
         });
+        
         
     }
 

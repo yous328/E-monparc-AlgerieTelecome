@@ -21,29 +21,34 @@ class Vehicle extends Model
         'status',
         'serviceID',
         'mileage',
+        'fuel_level',
+        'average_consumption',
+        'current_consumption',
+        'cost_per_km',
+        'daily_cost',
         'vehicleInsuranceID',
         'technicalControlID',
         'last_maintenance_date',
         'next_available_date',
-        'photo'
+        'photo',
+        'monthly_kilometrage',
+        'mission_stats',
+        'consumption'
     ];
 
-    // Smart availability check
-    public function isAvailableFor($date): bool
-    {
-        return $this->status === 'Available' &&
-            ($this->next_available_date === null || $this->next_available_date <= $date);
-    }
+    protected $casts = [
+        'monthly_kilometrage' => 'array',
+        'mission_stats' => 'array',
+        'consumption' => 'array',
+    ];
 
-    public function nextAvailableDate(): ?string
-    {
-        return $this->next_available_date ?? now()->toDateString();
-    }
-
-    // Relationships
     public function brand()
     {
         return $this->belongsTo(VehicleBrand::class, 'brandID');
+    }
+    public function model()
+    {
+        return $this->belongsTo(VehicleModel::class, 'modelID');
     }
     public function type()
     {
@@ -75,7 +80,7 @@ class Vehicle extends Model
     }
     public function maintenance()
     {
-        return $this->hasOne(VehicleMaintenance::class, 'vehicleID', 'vehicleID');
+        return $this->hasOne(VehicleMaintenance::class, 'vehicleID');
     }
     public function missions()
     {
@@ -85,7 +90,6 @@ class Vehicle extends Model
     {
         return $this->hasOne(VehicleTechnicalStatus::class, 'vehicleID');
     }
-
     public function usageHistory()
     {
         return $this->hasMany(VehicleUsageHistory::class, 'vehicleID');

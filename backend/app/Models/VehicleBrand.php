@@ -12,7 +12,7 @@ class VehicleBrand extends Model
 
     protected $primaryKey = 'brandID';
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'logo'];
 
     public function vehicles()
     {

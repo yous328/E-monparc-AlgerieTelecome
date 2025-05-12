@@ -9,9 +9,9 @@ export interface ITechnicalStatus {
     vidange: ITechnicalItem;
     batterie: ITechnicalItem;
     bougies: ITechnicalItem;
-    gazClim: ITechnicalItem;
+    gaz_clim: ITechnicalItem;
     chaine: ITechnicalItem;
     pneus: ITechnicalItem;
     filtres: ITechnicalItem;
-    plaquettesFrein: ITechnicalItem;
+    plaquettes_frein: ITechnicalItem;
 }

@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Api\Admin\Vehicles;
 
 use App\Models\Vehicle;
+use App\Models\Mission;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class VehicleController extends Controller
@@ -22,132 +23,96 @@ class VehicleController extends Controller
             'insurance',
             'technicalControl',
             'technicalStatus',
-            'usageHistory',
             'missions.driver'
         ]);
 
-        // Filter by Vehicle Type
-        if ($request->has('type') && $request->type !== '') {
+        if ($request->filled('type')) {
             $query->whereHas('type', function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->type . '%');
             });
         }
 
-        // Filter by Status (convert UI status labels to DB values)
-        if ($request->has('status') && $request->status !== '') {
+        if ($request->filled('status')) {
             $statusMap = [
                 'Disponible' => 'Available',
-                'Occupé' => 'On Mission',
-                'En Panne' => 'In Breakdown'
+                'Occupé' => 'OnMission',
+                'En Panne' => 'InBreakdown'
             ];
-            $query->where('status', $statusMap[$request->status] ?? $request->status);
+            $dbStatus = $statusMap[$request->status] ?? $request->status;
+            $query->where('status', $dbStatus);
         }
 
-        // Filter by Driver Assignment
-        if ($request->has('assignment') && $request->assignment !== '') {
-            $query->whereHas('missions', function ($q) use ($request) {
-                if ($request->assignment === 'affecté') {
-                    $q->whereNotNull('driverID');
-                } elseif ($request->assignment === 'non_affecté') {
-                    $q->whereNull('driverID');
-                }
-            });
+        if ($request->filled('assignment')) {
+            if ($request->assignment === 'affecté') {
+                $query->whereHas(
+                    'missions',
+                    fn($q) =>
+                    $q->where('status', 'in_progress')
+                        ->whereHas('driver', fn($dq) => $dq->where('status', 'OnMission'))
+                );
+            } elseif ($request->assignment === 'non_affecté') {
+                $query->where(function ($query) {
+                    $query->whereDoesntHave(
+                        'missions',
+                        fn($q) =>
+                        $q->where('status', 'in_progress')
+                            ->whereHas('driver', fn($dq) => $dq->where('status', 'Resting'))
+                    );
+                });
+            }
         }
 
-        $vehicles = $query->get();
+        $vehicles = $query->paginate(8);
 
-        // Map each vehicle into frontend-compatible structure
-        $mapped = $vehicles->map(function ($vehicle) {
+        $mapped = $vehicles->getCollection()->map(function ($vehicle) {
+            $latestMission = $vehicle->missions->sortByDesc('created_at')->first();
+            $driverName = $latestMission?->driver?->full_name ?? 'Unassigned';
+
             return [
                 'id' => $vehicle->vehicleID,
                 'brand' => $vehicle->brand->name ?? '',
                 'registration_number' => $vehicle->registration_number,
-                'image_url' => $vehicle->photo ? asset('storage/' . $vehicle->photo) : null,
+                'brand_logo' => $vehicle->brand?->logo
+                    ? asset('storage/' . ltrim($vehicle->brand->logo, '/'))
+                    : asset('storage/vehicles/brandsImg/Volkswagen.png'),
+
                 'status' => match ($vehicle->status) {
                     'Available' => 'Disponible',
-                    'On Mission' => 'Occupé',
-                    'In Breakdown' => 'En Panne',
-                    default => 'Unavailable'
+                    'OnMission' => 'Occupé',
+                    'InBreakdown' => 'En Panne',
+                    default => 'Indisponible'
                 },
+                'driver_name' => $driverName,
                 'kilometrage' => $vehicle->mileage,
-                'fuel' => (float) $vehicle->fuel_level,
-                'consumption_avg' => (float) $vehicle->average_consumption,
-                'consumption_current' => (float) $vehicle->current_consumption,
-                'price' => (float) $vehicle->cost_per_km,
                 'leasing_price' => (float) $vehicle->daily_cost,
-                'driver_name' => optional($vehicle->missions()->latest()->first()?->driver)->full_name ?? 'Unassigned',
-                'technical_check_expiry' => optional($vehicle->technicalControl)->expiry_date,
-                'insurance_type' => optional($vehicle->insurance)->type,
-                'insurance_expiry' => optional($vehicle->insurance)->expiry_date,
-
-                'usage_history' => $vehicle->usageHistory->map(function ($history) {
-                    return [
-                        'driver_name' => $history->driver_name,
-                        'phone' => $history->driver_phone,
-                        'date' => $history->usage_date,
-                        'from' => explode(' → ', $history->route)[0] ?? '',
-                        'to' => explode(' → ', $history->route)[1] ?? '',
-                        'distance_km' => (float) $history->distance_km,
-                        'average_speed' => $history->average_speed . ' km/h',
-                    ];
-                }),
-
-                'missions_per_month' => $vehicle->missions()
-                    ->whereMonth('mission_date', Carbon::now()->month)
-                    ->count(),
-
                 'technical_status' => [
                     'vidange' => [
-                        'done_at' => $vehicle->technicalStatus->vidange_km ?? 0,
-                        'next_due' => ($vehicle->technicalStatus->vidange_km ?? 0) + 10000
-                    ],
-                    'batterie' => [
-                        'done_at' => $vehicle->technicalStatus->batterie_km ?? 0,
-                        'next_due' => ($vehicle->technicalStatus->batterie_km ?? 0) + 30000
-                    ],
-                    'bougies' => [
-                        'done_at' => $vehicle->technicalStatus->bougies_km ?? 0,
-                        'next_due' => ($vehicle->technicalStatus->bougies_km ?? 0) + 40000
-                    ],
-                    'gaz_clim' => [
-                        'done_at' => $vehicle->technicalStatus->gaz_clim_km ?? 0,
-                        'next_due' => ($vehicle->technicalStatus->gaz_clim_km ?? 0) + 25000
-                    ],
-                    'chaine' => [
-                        'done_at' => $vehicle->technicalStatus->chaine_km ?? 0,
-                        'next_due' => ($vehicle->technicalStatus->chaine_km ?? 0) + 90000
-                    ],
-                    'pneus' => [
-                        'done_at' => $vehicle->technicalStatus->panneaux_km ?? 0,
-                        'next_due' => ($vehicle->technicalStatus->panneaux_km ?? 0) + 40000
-                    ],
-                    'filtres' => [
-                        'done_at' => $vehicle->technicalStatus->filtres_km ?? 0,
-                        'next_due' => ($vehicle->technicalStatus->filtres_km ?? 0) + 15000
-                    ],
-                    'plaquettes_frein' => [
-                        'done_at' => $vehicle->technicalStatus->plaquettes_frein_km ?? 0,
-                        'next_due' => ($vehicle->technicalStatus->plaquettes_frein_km ?? 0) + 20000
-                    ],
+                        'done_at' => $vehicle->technicalStatus->vidange_done_at ?? 0,
+                        'next_due' => $vehicle->technicalStatus->vidange_next_due ?? 0,
+                    ]
                 ]
             ];
         });
 
-        return response()->json($mapped);
+        return response()->json([
+            'data' => $mapped,
+            'current_page' => $vehicles->currentPage(),
+            'last_page' => $vehicles->lastPage(),
+            'total' => $vehicles->total(),
+        ]);
     }
-
-
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'registration_number' => 'required|unique:vehicles',
             'brandID' => 'required|exists:vehicle_brands,brandID',
+            'modelID' => 'required|exists:vehicle_models,modelID',
             'vehicleTypeID' => 'required|exists:vehicle_types,vehicleTypeID',
             'engineTypeID' => 'required|exists:engine_types,engineTypeID',
             'fuelTypeID' => 'required|exists:fuel_types,fuelTypeID',
             'colorID' => 'required|exists:colors,colorID',
-            'status' => 'required|in:Available,On Mission,Under Maintenance,In Breakdown,Unavailable',
+            'status' => 'required|in:Available,OnMission,UnderMaintenance,InBreakdown,Unavailable',
             'serviceID' => 'required|exists:services,serviceID',
             'mileage' => 'required|integer',
             'last_maintenance_date' => 'nullable|date',
@@ -179,10 +144,116 @@ class VehicleController extends Controller
             'insurance',
             'technicalControl',
             'technicalStatus',
+            'missions.driver',
             'usageHistory',
-            'missions'
         ])->findOrFail($id);
 
-        return response()->json($vehicle);
+        $lastMissionWithDriver = $vehicle->missions()
+            ->whereNotNull('driverID')
+            ->with('driver.user')
+            ->latest('created_at')
+            ->first();
+
+
+        $allMissions = $vehicle->missions()
+            ->orderByDesc('mission_date')
+            ->get();
+
+        return response()->json([
+            'id' => $vehicle->vehicleID,
+            'registration' => $vehicle->registration_number,
+            'status' => $vehicle->status,
+
+            'brand' => [
+                'name' => $vehicle->brand?->name,
+                'logo' => $vehicle->brand?->logo,
+            ],
+
+            'model' => $vehicle->model?->model_name,
+
+            'image_url' => $vehicle->photo ? asset('storage/' . $vehicle->photo) : null,
+
+            'driver' => $lastMissionWithDriver && $lastMissionWithDriver->driver && $lastMissionWithDriver->driver->user ? [
+                'name' => $lastMissionWithDriver->driver->user->first_name . ' ' . $lastMissionWithDriver->driver->user->last_name,
+                'phone' => $lastMissionWithDriver->driver->user->phone_number,
+            ] : null,
+
+            'consumption' => $vehicle->consumption ?? [
+                'average' => $vehicle->average_consumption ?? 0,
+                'current' => $vehicle->current_consumption ?? 0,
+            ],
+
+            'fuel_level' => $vehicle->fuel_level ?? 0,
+
+            'insurance' => [
+                'type' => $vehicle->insurance?->insurance_type ?? 'Néant',
+                'expiry_date' => $vehicle->insurance?->insurance_end_date,
+            ],
+
+            'technical_control' => [
+                'status' => $vehicle->technicalControl?->status ?? 'Neant',
+                'expiration_date' => $vehicle->technicalControl?->expiration_date,
+            ],
+
+            'technical_status' => [
+                'vidange' => [
+                    'done_at' => $vehicle->technicalStatus?->vidange_done_at,
+                    'next_due' => $vehicle->technicalStatus?->vidange_next_due,
+                ],
+                'batterie' => [
+                    'done_at' => $vehicle->technicalStatus?->batterie_done_at,
+                    'next_due' => $vehicle->technicalStatus?->batterie_next_due,
+                ],
+                'bougies' => [
+                    'done_at' => $vehicle->technicalStatus?->bougies_done_at,
+                    'next_due' => $vehicle->technicalStatus?->bougies_next_due,
+                ],
+                'gaz_clim' => [
+                    'done_at' => $vehicle->technicalStatus?->gaz_clim_done_at,
+                    'next_due' => $vehicle->technicalStatus?->gaz_clim_next_due,
+                ],
+                'chaine' => [
+                    'done_at' => $vehicle->technicalStatus?->chaine_done_at,
+                    'next_due' => $vehicle->technicalStatus?->chaine_next_due,
+                ],
+                'pneus' => [
+                    'done_at' => $vehicle->technicalStatus?->pneus_done_at,
+                    'next_due' => $vehicle->technicalStatus?->pneus_next_due,
+                ],
+                'filtres' => [
+                    'done_at' => $vehicle->technicalStatus?->filtres_done_at,
+                    'next_due' => $vehicle->technicalStatus?->filtres_next_due,
+                ],
+                'plaquettes_frein' => [
+                    'done_at' => $vehicle->technicalStatus?->plaquettes_frein_done_at,
+                    'next_due' => $vehicle->technicalStatus?->plaquettes_frein_next_due,
+                ],
+            ],
+
+            'usage_history' => $vehicle->usageHistory->map(function ($usage) {
+                $fromTo = explode('→', $usage->route);
+                return [
+                    'driver_name' => $usage->driver_name,
+                    'phone' => $usage->driver_phone,
+                    'date' => $usage->usage_date,
+                    'from' => trim($fromTo[0] ?? ''),
+                    'to' => trim($fromTo[1] ?? ''),
+                    'distance_km' => $usage->distance_km,
+                    'average_speed' => $usage->average_speed,
+                ];
+            }),
+
+            'missions' => $allMissions->map(function ($mission) {
+                return [
+                    'id' => $mission->missionID,
+                    'title' => $mission->description ?? 'Mission',
+                    'date' => $mission->mission_date,
+                    'status' => $mission->status,
+                ];
+            }),
+
+            'monthly_kilometrage' => $vehicle->monthly_kilometrage ?? [],
+            'mission_stats' => $vehicle->mission_stats ?? [],
+        ]);
     }
 }

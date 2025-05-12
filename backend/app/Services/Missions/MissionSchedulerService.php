@@ -65,20 +65,20 @@ class MissionSchedulerService
 
     protected function scheduleVehicleAvailability(Vehicle $vehicle, bool $isAvailable = false): void
     {
-        $vehicle->status = $isAvailable ? 'Available' : 'On Mission';
+        $vehicle->status = $isAvailable ? 'Available' : 'OnMission';
         $vehicle->save();
     }
 
     protected function scheduleDriverAvailability(Driver $driver, bool $isAvailable = false): void
     {
-        $driver->status = $isAvailable ? 'Available' : 'On Mission';
+        $driver->status = $isAvailable ? 'Available' : 'OnMission';
         $driver->save();
     }
 
     protected function scheduleEmployeeAvailability(?Employee $employee, bool $isAvailable = false): void
     {
         if ($employee) {
-            $employee->status = $isAvailable ? 'Available' : 'On Mission';
+            $employee->status = $isAvailable ? 'Available' : 'OnMission';
             $employee->save();
         }
     }

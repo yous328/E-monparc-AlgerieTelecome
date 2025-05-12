@@ -40,8 +40,10 @@ class MissionFactory extends Factory
             'mission_time' => $this->faker->time('H:i:s'),
             'missionObjectiveID' => $missionObjective->missionObjectiveID,
             'description' => $this->faker->sentence(),
+            'distance_km' => $this->faker->randomFloat(2, 50, 1000),
             'created_by' => $admin->id,
             'status' => $this->faker->randomElement(['pending', 'in_progress', 'canceled', 'completed', 'not_started_yet']),
-        ];        
+        ];
+                
     }
 }

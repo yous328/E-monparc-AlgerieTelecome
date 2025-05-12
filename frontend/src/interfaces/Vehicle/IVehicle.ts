@@ -1,28 +1,12 @@
-import { ITechnicalStatus } from './ITechnicalStatus';
-import { IConsumption } from './IConsumption';
-import { IUsageHistory } from './IUsageHistory';
-
 export interface IVehicle {
     id: number;
     brand: string;
     model: string;
     registration: string;
-    imageUrl: string;
-    status: 'Disponible' | 'En Panne' | 'Occupé';
-    kilometers: number;
-    fuelLevel: number;
-    costPerKm: number;
-    dailyCost: number;
+    brandLogo: string;
+    status: string;
     driver: string;
-
-    insurance: string;
-    inspectionDate: string;
-    expirationDate: string;
-
-    averageConsumption: IConsumption;
-    currentConsumption: IConsumption;
-
-    usageHistory: IUsageHistory[];
-    missions_per_month: number;
-    technicalStatus: ITechnicalStatus;
+    kilometers: number;
+    dailyCost: number;
+    vidangeNextDue: number;
 }

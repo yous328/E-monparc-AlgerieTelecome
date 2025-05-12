@@ -1,8 +1,9 @@
 export interface IUsageHistory {
-    driverName: string;
-    phoneNumber: string;
+    driver_name: string;
+    phone: string;
     date: string;
-    route: string;
-    distance: number;
-    speed: number;
-}  
+    from: string;
+    to: string;
+    distance_km: string;
+    average_speed: string;
+}

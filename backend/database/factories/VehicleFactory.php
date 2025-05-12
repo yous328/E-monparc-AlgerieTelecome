@@ -5,14 +5,16 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Vehicle;
 use App\Models\VehicleBrand;
+use App\Models\VehicleModel;
 use App\Models\VehicleType;
 use App\Models\EngineType;
 use App\Models\FuelType;
 use App\Models\Color;
 use App\Models\Service;
+use App\Models\VehicleInsurance;
+use App\Models\TechnicalControl;
 use App\Models\VehicleTechnicalStatus;
 use App\Models\VehicleUsageHistory;
-use Illuminate\Support\Str;
 
 class VehicleFactory extends Factory
 {
@@ -20,89 +22,76 @@ class VehicleFactory extends Factory
 
     public function definition(): array
     {
-        $this->faker->unique(true);
+        $faker = $this->faker;
 
-        $brandID = VehicleBrand::inRandomOrder()->value('brandID') 
-            ?? VehicleBrand::factory()->create()->brandID;
+        $brand = VehicleBrand::inRandomOrder()->first() ?? VehicleBrand::factory()->create();
+        $model = VehicleModel::inRandomOrder()->first() ?? VehicleModel::factory()->create();
+        $fuelType = FuelType::inRandomOrder()->first() ?? FuelType::factory()->create();
+        $engine = EngineType::inRandomOrder()->first() ?? EngineType::factory()->create([
+            'name' => 'Hybrid',
+            'capacity' => '1.8L',
+            'brandID' => $brand->brandID,
+            'fuelTypeID' => $fuelType->fuelTypeID,
+        ]);
 
-        $fuelTypeID = FuelType::inRandomOrder()->value('fuelTypeID') 
-            ?? FuelType::factory()->create()->fuelTypeID;
+        $insurance = VehicleInsurance::factory()->create();
+        $control = TechnicalControl::factory()->create();
 
-        $engineTypeID = EngineType::inRandomOrder()->value('engineTypeID') 
-            ?? EngineType::factory()->create([
-                'name' => 'Hybrid4',
-                'capacity' => '1.6L + Electric',
-                'brandID' => $brandID,
-                'fuelTypeID' => $fuelTypeID,
-            ])->engineTypeID;
+        $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        $monthlyKilometrage = collect($months)->map(function ($month) {
+            return [
+                'month' => $month,
+                'days' => collect(range(1, 31))->mapWithKeys(fn($d) => [str_pad($d, 2, '0', STR_PAD_LEFT) => rand(0, 30)])
+            ];
+        });
 
-        // Store fake image locally in `storage/app/public/vehicles`
-        $fakeImageName = $this->faker->image(
-            storage_path('app/public/vehicles'), 
-            640, 
-            480, 
-            'transport', 
-            false
+        $missionStats = collect($months)->map(fn($m) => ['month' => $m, 'mission' => rand(0, 30)]);
+
+        // Vehicle image
+        $vehicleImage = $faker->image(
+            storage_path('app/public/vehicles/images'),
+            640, // width
+            480, // height
+            'transport', // category
+            false // don't return base64
         );
-        $photoPath = 'vehicles/' . $fakeImageName;
 
         return [
-            'registration_number' => strtoupper($this->faker->unique()->bothify('####-???-##')),
-            'brandID' => $brandID,
-            'vehicleTypeID' => VehicleType::inRandomOrder()->value('vehicleTypeID') 
-                ?? VehicleType::factory()->create()->vehicleTypeID,
-            'engineTypeID' => $engineTypeID,
-            'fuelTypeID' => $fuelTypeID,
-            'colorID' => Color::inRandomOrder()->value('colorID') 
-                ?? Color::factory()->create()->colorID,
-            'serviceID' => Service::inRandomOrder()->value('serviceID') 
-                ?? Service::factory()->create()->serviceID,
-            'status' => $this->faker->randomElement([
-                'Available', 'On Mission', 'Under Maintenance', 'In Breakdown', 'Unavailable'
-            ]),
-            'mileage' => $this->faker->numberBetween(10000, 200000),
-            'fuel_level' => $this->faker->randomFloat(1, 0, 100),
-            'average_consumption' => $this->faker->randomFloat(2, 5, 15),
-            'current_consumption' => $this->faker->randomFloat(2, 5, 15),
-            'cost_per_km' => $this->faker->randomFloat(2, 50, 150),
-            'daily_cost' => $this->faker->randomFloat(2, 1000, 10000),
-            'vehicleInsuranceID' => null,
-            'technicalControlID' => null,
-            'last_maintenance_date' => $this->faker->optional()->date(),
-            'next_available_date' => $this->faker->optional()->date(),
-            'photo' => 'vehicles/Volkswagen.png',
+            'registration_number' => strtoupper($faker->unique()->bothify('####-???-##')),
+            'brandID' => $brand->brandID,
+            'modelID' => $model->modelID,
+            'vehicleTypeID' => VehicleType::inRandomOrder()->value('vehicleTypeID') ?? VehicleType::factory()->create()->vehicleTypeID,
+            'engineTypeID' => $engine->engineTypeID,
+            'fuelTypeID' => $fuelType->fuelTypeID,
+            'colorID' => Color::inRandomOrder()->value('colorID') ?? Color::factory()->create()->colorID,
+            'serviceID' => Service::inRandomOrder()->value('serviceID') ?? Service::factory()->create()->serviceID,
+            'status' => $faker->randomElement(['Available', 'OnMission', 'UnderMaintenance']),
+            'mileage' => $faker->numberBetween(10000, 200000),
+            'fuel_level' => $faker->randomFloat(1, 0, 100),
+            'average_consumption' => $faker->randomFloat(2, 500, 15000),
+            'current_consumption' => $faker->randomFloat(2, 500, 15000),
+            'cost_per_km' => $faker->randomFloat(2, 0.5, 1.5),
+            'daily_cost' => $faker->randomFloat(2, 10, 100),
+            'vehicleInsuranceID' => $insurance->vehicleInsuranceID,
+            'technicalControlID' => $control->technicalControlID,
+            'last_maintenance_date' => $faker->date(),
+            'next_available_date' => $faker->date(),
+            'photo' => 'vehicles/images/' . basename($vehicleImage),
+
+            'monthly_kilometrage' => $monthlyKilometrage,
+            'mission_stats' => $missionStats,
+            'consumption' => [
+                'average' => 6000,
+                'current' => 1500
+            ],
         ];
     }
 
     public function configure()
     {
         return $this->afterCreating(function (Vehicle $vehicle) {
-            $faker = \Faker\Factory::create();
-
-            VehicleTechnicalStatus::factory()->create([
-                'vehicleID' => $vehicle->vehicleID,
-                'vidange_km' => 200000,
-                'batterie_km' => 180000,
-                'bougies_km' => 170000,
-                'gaz_clim_km' => 160000,
-                'chaine_km' => 150000,
-                'panneaux_km' => 140000,
-                'plaquettes_frein_km' => 130000,
-                'filtres_km' => 120000,
-            ]);
-
-            VehicleUsageHistory::factory()->count(3)->create([
-                'vehicleID' => $vehicle->vehicleID,
-            ])->each(function ($history) use ($faker) {
-                $history->update([
-                    'driver_name' => $faker->name,
-                    'driver_phone' => $faker->phoneNumber,
-                    'usage_date' => $faker->date(),
-                    'route' => $faker->city() . ' → ' . $faker->city(),
-                    'distance_km' => $faker->numberBetween(20, 500),
-                    'average_speed' => $faker->numberBetween(40, 100),
-                ]);
-            });
+            VehicleTechnicalStatus::factory()->create(['vehicleID' => $vehicle->vehicleID]);
+            VehicleUsageHistory::factory()->count(3)->create(['vehicleID' => $vehicle->vehicleID]);
         });
     }
 }
