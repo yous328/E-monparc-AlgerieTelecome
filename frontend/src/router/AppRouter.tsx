@@ -4,6 +4,7 @@ import { LoginPage } from '../pages/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { VehiclesPage } from '../pages/vehicles/VehiclePage';
 import VehicleDetailPage from '../pages/vehicles/VehicleDetailPage';
+import AddVehicle from '../pages/vehicles/AddVehicle';
 import { ProtectedRoute } from '../components/utils/ProtectedRoute';
 import { DashboardProvider } from '../context/Dashboard/DashboardProvider';
 
@@ -43,6 +44,17 @@ export function AppRouter() {
                     <ProtectedRoute>
                         <DashboardProvider>
                             <VehicleDetailPage />
+                        </DashboardProvider>
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/vehicles/add"
+                element={
+                    <ProtectedRoute>
+                        <DashboardProvider>
+                            <AddVehicle />
                         </DashboardProvider>
                     </ProtectedRoute>
                 }
