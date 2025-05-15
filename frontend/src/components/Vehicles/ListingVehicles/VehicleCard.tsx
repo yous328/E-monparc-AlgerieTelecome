@@ -4,6 +4,7 @@ import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
 import BuildIcon from '@mui/icons-material/Build';
 import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 interface VehicleCardProps {
   vehicle: IVehicle;
@@ -11,6 +12,12 @@ interface VehicleCardProps {
 
 export function VehicleCard({ vehicle }: VehicleCardProps) {
   const navigate = useNavigate();
+  const imageUrl = vehicle.brandLogo || `/fallback-vehicle.png`;
+  
+  useEffect(() => {
+    console.log('Vehicle brand logo path:', vehicle.brandLogo);
+    console.log('Full image URL:', imageUrl);
+  }, [vehicle.brandLogo, imageUrl]);
 
   const getStatusStyle = () => {
     switch (vehicle.status) {
@@ -40,11 +47,16 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
 
       {/* Logo */}
       <div className="mb-4 flex justify-center">
-        <div className="h-32 w-64  flex items-center justify-center p-1">
+        <div className="h-32 w-64 flex items-center justify-center p-1">
           <img
-            src={vehicle.brandLogo || '/fallback-vehicle.png'}
+            src={imageUrl}
             alt={`${vehicle.brand} logo`}
             className="h-full w-full object-contain"
+            onError={(e) => {
+              console.log(`Failed to load image: ${(e.target as HTMLImageElement).src}`);
+              // Fallback if the image fails to load
+              (e.target as HTMLImageElement).src = `/fallback-vehicle.png`;
+            }}
           />
         </div>
       </div>

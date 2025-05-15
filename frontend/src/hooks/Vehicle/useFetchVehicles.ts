@@ -46,17 +46,23 @@ export function useFetchVehicles() {
                 total: number;
             }>(url);
 
-            const vehicles: IVehicle[] = data.data.map((item): IVehicle => ({
-                id: item.id,
-                brand: item.brand,
-                registration: item.registration_number,
-                brandLogo: item.brand_logo ?? '',
-                status: item.status,
-                driver: item.driver_name ?? 'Unassigned',
-                kilometers: item.kilometrage ?? 0,
-                dailyCost: item.leasing_price ?? 0,
-                vidangeNextDue: item.technical_status?.vidange?.next_due ?? 0,
-            }));
+            console.log('API response data:', data.data);
+            
+            const vehicles: IVehicle[] = data.data.map((item): IVehicle => {
+                console.log(`Vehicle ${item.id} brand_logo:`, item.brand_logo);
+                
+                return {
+                    id: item.id,
+                    brand: item.brand,
+                    registration: item.registration_number,
+                    brandLogo: item.brand_logo ?? '',
+                    status: item.status,
+                    driver: item.driver_name ?? 'Unassigned',
+                    kilometers: item.kilometrage ?? 0,
+                    dailyCost: item.leasing_price ?? 0,
+                    vidangeNextDue: item.technical_status?.vidange?.next_due ?? 0,
+                };
+            });
 
             return {
                 vehicles,

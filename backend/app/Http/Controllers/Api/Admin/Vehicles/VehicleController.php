@@ -78,8 +78,8 @@ class VehicleController extends Controller
                 'brand' => $vehicle->brand->name ?? '',
                 'registration_number' => $vehicle->registration_number,
                 'brand_logo' => $vehicle->brand?->logo
-                    ? asset('storage/' . ltrim($vehicle->brand->logo, '/'))
-                    : asset('storage/vehicles/brandsImg/Volkswagen.png'),
+                    ? asset('storage/' . $vehicle->brand->logo)
+                    : asset('storage/vehicles/brandImg/Volkswagen.png'),
 
                 'status' => match ($vehicle->status) {
                     'Available' => 'Disponible',
