@@ -68,16 +68,16 @@ export function useFetchVehicles() {
                 }
                 
                 return {
-                    id: item.id,
-                    brand: item.brand,
-                    registration: item.registration_number,
-                    brandLogo: item.brand_logo ?? '',
-                    status: item.status,
+                id: item.id,
+                brand: item.brand,
+                registration: item.registration_number,
+                brandLogo: item.brand_logo ?? '',
+                status: item.status,
                     driver: item.driver_name !== "Driver On Mission" ? item.driver_name ?? 'Unassigned' : 'Unassigned',
                     driverDetails: item.driver,
-                    kilometers: item.kilometrage ?? 0,
-                    dailyCost: item.leasing_price ?? 0,
-                    vidangeNextDue: item.technical_status?.vidange?.next_due ?? 0,
+                kilometers: item.kilometrage ?? 0,
+                dailyCost: item.leasing_price ?? 0,
+                vidangeNextDue: item.technical_status?.vidange?.next_due ?? 0,
                 };
             });
 

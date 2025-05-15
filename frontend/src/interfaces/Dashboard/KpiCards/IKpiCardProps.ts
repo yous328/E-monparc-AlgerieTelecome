@@ -10,4 +10,5 @@ export interface IKpiCardProps {
         value: number;
         color: string;
     }[];
+    bgColor?: string;
 }

@@ -71,11 +71,11 @@ class VehicleController extends Controller
             
             // For vehicles that are on mission, get the current active mission
             if ($vehicle->status === 'OnMission') {
-                $lastMissionWithDriver = $vehicle->missions()
+            $lastMissionWithDriver = $vehicle->missions()
                     ->withDriver()
                     ->active()
-                    ->latest('created_at')
-                    ->first();
+                ->latest('created_at')
+                ->first();
             }
             
             // If we didn't find an active mission, try to get the most recent mission

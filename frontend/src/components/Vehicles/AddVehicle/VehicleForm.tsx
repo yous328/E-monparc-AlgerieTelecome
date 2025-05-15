@@ -118,7 +118,7 @@ const VehicleForm = () => {
                 
                 // Validate the complete data
                 await vehicleFormSchema.validate(submissionData, { abortEarly: false });
-                
+
                 // Submit the form
                 await submitVehicleForm(submissionData);
                 
@@ -220,7 +220,7 @@ const VehicleForm = () => {
                 }, {});
 
                 await currentStepSchema.validate(currentStepData, { abortEarly: false });
-                setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
+            setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
                 setErrors({}); // Clear errors on valid step
             } catch (validationErrors) {
                 console.log('Validation Errors (Current Step):', validationErrors);

@@ -11,8 +11,8 @@ export function DashboardPage() {
     if (loading) {
         return (
             <Layout>
-                <div className="flex justify-center items-center h-screen">
-                    Loading Dashboard...
+                <div className="flex justify-center items-center h-full py-20">
+                    <div className="animate-pulse text-gray-600">Loading Dashboard...</div>
                 </div>
             </Layout>
         );
@@ -20,18 +20,20 @@ export function DashboardPage() {
 
     return (
         <Layout>
-            {/* KPI Cards (Vehicles, Drivers, Missions) */}
-            <KpiCardsGroup />
+            <div className="px-4 py-6 md:px-6 max-w-screen-2xl mx-auto bg-gray-50">
+                {/* KPI Cards (Vehicles, Drivers, Missions) */}
+                <KpiCardsGroup />
 
-            {/* Charts */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                <MissionTypesChart />
-                <MissionRealisation />
-            </div>
+                {/* Charts */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mt-6 md:mt-8">
+                    <MissionTypesChart />
+                    <MissionRealisation />
+                </div>
 
-            {/* Mission Table */}
-            <div className="mt-8">
-                <MissionInProgressTable />
+                {/* Mission Table */}
+                <div className="mt-6 md:mt-8">
+                    <MissionInProgressTable />
+                </div>
             </div>
         </Layout>
     );

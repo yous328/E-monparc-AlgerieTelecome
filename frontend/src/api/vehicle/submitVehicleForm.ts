@@ -117,7 +117,7 @@ export const submitVehicleForm = async (formData: VehicleFormData) => {
             }
         } else {
             console.error('API error:', error);
-            toast.error('Failed to add vehicle. Please try again.');
+        toast.error('Failed to add vehicle. Please try again.');
         }
         throw error;
     }

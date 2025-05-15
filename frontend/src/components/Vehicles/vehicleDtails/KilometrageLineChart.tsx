@@ -7,6 +7,7 @@ import {
     DotProps,
 } from 'recharts';
 import { useState, useMemo } from 'react';
+import { MoreVertical } from 'lucide-react';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 interface KilometragePoint {
@@ -60,32 +61,39 @@ export const KilometrageLineChart = ({ data }: KilometrageLineChartProps) => {
     };
 
     return (
-        <div className="bg-[#EAEFED] p-4 rounded shadow">
+        <div className="bg-white p-4 rounded-lg shadow">
             <div className="flex justify-between items-center mb-2">
-                <h3 className="font-semibold text-sm text-gray-700">Kilométrage réalisé</h3>
+                <h3 className="font-semibold text-sm text-gray-700">Kilométrage réaliser</h3>
 
-                {/* Styled select with dropdown icon */}
-                <div className="relative">
-                    <select
-                        className="text-sm px-3 py-1 pr-8 rounded-md bg-[#2563EB] text-white font-medium shadow-sm appearance-none focus:outline-none"
-                        value={selectedMonth}
-                        onChange={(e) => setSelectedMonth(e.target.value)}
-                    >
-                        {months.map((month) => (
-                            <option key={month} value={month}>
-                                {month}
-                            </option>
-                        ))}
-                    </select>
-                    <ArrowDropDownIcon className="absolute right-2 top-1/2 -translate-y-1/2 text-white pointer-events-none" />
+                <div className="flex items-center gap-2">
+                    {/* Month Selector */}
+                    <div className="relative">
+                        <select
+                            className="appearance-none text-xs px-3 py-1 pr-8 rounded-md bg-[#2563EB] text-white font-medium shadow-sm focus:outline-none"
+                            value={selectedMonth}
+                            onChange={(e) => setSelectedMonth(e.target.value)}
+                        >
+                            {months.map((month) => (
+                                <option key={month} value={month}>
+                                    {month}
+                                </option>
+                            ))}
+                        </select>
+                        <ArrowDropDownIcon className="absolute right-1 top-1/2 -translate-y-1/2 text-white pointer-events-none" style={{ fontSize: '1.2rem' }} />
+                    </div>
+                    
+                    {/* More Options */}
+                    <button className="text-gray-500 hover:bg-gray-100 p-1 rounded-full">
+                        <MoreVertical size={16} />
+                    </button>
                 </div>
             </div>
 
-            <div className="h-48">
+            <div className="h-44 sm:h-52">
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart
                         data={filteredData}
-                        margin={{ top: 20, right: 20, bottom: 24, left: 10 }}
+                        margin={{ top: 5, right: 10, bottom: 20, left: 10 }}
                         onMouseMove={(state) => {
                             const point = state?.activePayload?.[0]?.payload;
                             setHoveredDay(point?.day ?? null);
@@ -94,11 +102,11 @@ export const KilometrageLineChart = ({ data }: KilometrageLineChartProps) => {
                     >
                         <XAxis
                             dataKey="day"
-                            tick={{ fontSize: 10, fill: '#6B7280' }}
-                            interval={1}
+                            tick={{ fontSize: 9, fill: '#6B7280' }}
+                            interval={2}
                             axisLine={false}
                             tickLine={false}
-                            dy={15}
+                            dy={10}
                         />
                         <Tooltip content={<CustomTooltip />} cursor={false} />
                         <Line
@@ -120,7 +128,7 @@ export const KilometrageLineChart = ({ data }: KilometrageLineChartProps) => {
                                                 x={cx - 8}
                                                 y={cy + 5}
                                                 width={16}
-                                                height={55}
+                                                height={38}
                                                 fill="#3B82F6"
                                                 fillOpacity={0.2}
                                                 rx={4}

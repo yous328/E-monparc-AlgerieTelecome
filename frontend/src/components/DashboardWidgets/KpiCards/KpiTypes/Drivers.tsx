@@ -13,14 +13,15 @@ export function DriversCard() {
     return (
         <KpiCard
             title="Chauffeurs"
-            icon={<FontAwesomeIcon icon={faWalking} size='2x' />}
+            icon={<FontAwesomeIcon icon={faWalking} className="text-blue-500" size="2x" />}
             value={total}
             unit="Chauffeurs"
             segments={[
                 { label: 'Occupé', value: calculatePercentage(occupied, total), color: '#3399FF' },
                 { label: 'Disponible', value: calculatePercentage(available, total), color: '#66CCFF' },
-                { label: 'unavailable', value: calculatePercentage(unavailable, total), color: '#000066' }
+                { label: 'Indisponible', value: calculatePercentage(unavailable, total), color: '#000066' }
             ]}
+            bgColor="#EAEFED"
         />
     );
 }

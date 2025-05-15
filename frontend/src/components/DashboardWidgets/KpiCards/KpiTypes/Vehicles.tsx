@@ -13,15 +13,15 @@ export function VehiclesCard() {
     return (
         <KpiCard
             title="Véhicules"
-            icon={<FontAwesomeIcon icon={faCar} size='2x' />}
+            icon={<FontAwesomeIcon icon={faCar} className="text-blue-500" size="2x" />}
             value={total}
             unit="Véhicules"
             segments={[
                 { label: 'Occupé', value: occupied, color: '#3399FF' },
                 { label: 'Disponible', value: available, color: '#66CCFF' },
                 { label: 'E-panne', value: in_breakdown, color: '#000066' }
-                
-            ]}            
+            ]}  
+            bgColor="#EAEFED"          
         />
     );
 }

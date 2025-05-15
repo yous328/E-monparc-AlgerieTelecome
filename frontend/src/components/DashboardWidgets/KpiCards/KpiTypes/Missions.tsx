@@ -13,7 +13,7 @@ export function MissionsCard() {
     return (
         <KpiCard
             title="Missions"
-            icon={<FontAwesomeIcon icon={faMapMarkedAlt} size='2x' />}
+            icon={<FontAwesomeIcon icon={faMapMarkedAlt} className="text-blue-500" size="2x" />}
             value={total}
             unit="Missions"
             segments={[
@@ -21,6 +21,7 @@ export function MissionsCard() {
                 { label: 'En cours', value: calculatePercentage(in_progress, total), color: '#66CCFF' },
                 { label: 'Planifiée', value: calculatePercentage(planned, total), color: '#000066' }
             ]}
+            bgColor="#EAEFED"
         />
     );
 }
