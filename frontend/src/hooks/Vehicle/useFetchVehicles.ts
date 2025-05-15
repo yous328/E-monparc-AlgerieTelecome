@@ -15,6 +15,18 @@ interface VehicleApiResponse {
     brand_logo: string;
     status: string;
     driver_name: string;
+    driver: {
+        name: string;
+        phone: string;
+        status: string;
+    } | null;
+    debug_info?: {
+        vehicle_status: string;
+        has_mission: boolean;
+        has_driver: boolean;
+        has_user: boolean;
+        mission_status: string | null;
+    };
     kilometrage: number;
     leasing_price: number;
     technical_status: {
@@ -51,13 +63,18 @@ export function useFetchVehicles() {
             const vehicles: IVehicle[] = data.data.map((item): IVehicle => {
                 console.log(`Vehicle ${item.id} brand_logo:`, item.brand_logo);
                 
+                if (item.debug_info) {
+                    console.log(`Vehicle ${item.id} debug info:`, item.debug_info);
+                }
+                
                 return {
                     id: item.id,
                     brand: item.brand,
                     registration: item.registration_number,
                     brandLogo: item.brand_logo ?? '',
                     status: item.status,
-                    driver: item.driver_name ?? 'Unassigned',
+                    driver: item.driver_name !== "Driver On Mission" ? item.driver_name ?? 'Unassigned' : 'Unassigned',
+                    driverDetails: item.driver,
                     kilometers: item.kilometrage ?? 0,
                     dailyCost: item.leasing_price ?? 0,
                     vidangeNextDue: item.technical_status?.vidange?.next_due ?? 0,

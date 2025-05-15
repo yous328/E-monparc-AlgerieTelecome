@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import React from "react";
+import { useVehicleTypes } from "../../../hooks/Vehicle/useVehicleTypes";
 
 interface VehiclesFiltersProps {
     filters: {
@@ -16,6 +17,7 @@ interface VehiclesFiltersProps {
 
 export function VehiclesFilters({ filters, setFilters }: VehiclesFiltersProps) {
     const navigate = useNavigate();
+    const { types, loading } = useVehicleTypes();
 
     const handleFilterChange = (key: keyof typeof filters, value: string) => {
         setFilters((prev) => ({ ...prev, [key]: value }));
@@ -28,11 +30,14 @@ export function VehiclesFilters({ filters, setFilters }: VehiclesFiltersProps) {
                 onChange={(e) => handleFilterChange("type", e.target.value)}
                 className="px-12 py-2 rounded border bg-[#edf1f0] text-sm text-gray-700 shadow-sm"
                 aria-label="Filtrer par Type"
+                disabled={loading}
             >
                 <option value="">Filtrer par Type</option>
-                <option value="van">Van</option>
-                <option value="camion">Camion</option>
-                <option value="utilitaire">Utilitaire</option>
+                {types.map(type => (
+                    <option key={type.vehicleTypeID} value={type.name.toLowerCase()}>
+                        {type.name}
+                    </option>
+                ))}
             </select>
 
             <select

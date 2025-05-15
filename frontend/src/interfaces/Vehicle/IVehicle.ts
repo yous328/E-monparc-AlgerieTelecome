@@ -5,6 +5,11 @@ export interface IVehicle {
     brandLogo: string;
     status: string;
     driver: string | null;
+    driverDetails?: {
+        name: string;
+        phone: string;
+        status?: string;
+    } | null;
     kilometers: number;
     dailyCost: number;
     vidangeNextDue: number;

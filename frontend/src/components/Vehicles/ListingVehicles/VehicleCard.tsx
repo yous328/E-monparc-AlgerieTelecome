@@ -17,7 +17,10 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
   useEffect(() => {
     console.log('Vehicle brand logo path:', vehicle.brandLogo);
     console.log('Full image URL:', imageUrl);
-  }, [vehicle.brandLogo, imageUrl]);
+    console.log('Vehicle driver details:', vehicle.driverDetails);
+    console.log('Vehicle driver status:', vehicle.driverDetails?.status);
+    console.log('Vehicle status:', vehicle.status);
+  }, [vehicle.brandLogo, imageUrl, vehicle.driverDetails, vehicle.status]);
 
   const getStatusStyle = () => {
     switch (vehicle.status) {
@@ -34,6 +37,29 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
 
   const handleDetailsClick = () => {
     navigate(`/vehicles/${vehicle.id}`);
+  };
+
+  // Determine the driver display text
+  const getDriverDisplay = () => {
+    // Case 1: Driver with full details (name, phone)
+    if (vehicle.driverDetails && vehicle.driverDetails.status !== 'Resting') {
+      return (
+        <span className="flex flex-col">
+          <span className="text-[9px] font-medium">{vehicle.driverDetails.name}</span>
+          <span className="text-[8px] text-gray-500">{vehicle.driverDetails.phone}</span>
+        </span>
+      );
+    }
+    
+    // Case 2: Driver with only name
+    if (vehicle.driver && 
+        vehicle.driver !== 'Unassigned' && 
+        vehicle.driver !== 'Driver On Mission') {
+      return <span className="text-[9px] font-medium">{vehicle.driver}</span>;
+    }
+    
+    // Default case: No driver or driver resting
+    return <span className="text-gray-500">Non Assigné</span>;
   };
 
   return (
@@ -76,8 +102,11 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
           <span>{vehicle.vidangeNextDue.toLocaleString()} KM</span>
         </div>
         <div className="flex items-center space-x-1">
-          <PersonIcon style={{ fontSize: 11 }} className="text-gray-500" />
-          <span>{vehicle.driver || 'Unassigned'}</span>
+          <PersonIcon style={{ fontSize: 11 }} className="text-gray-500 mt-0.5" />
+          <span>
+            {/* Driver with details */}
+            {getDriverDisplay()}
+          </span>
         </div>
       </div>
 

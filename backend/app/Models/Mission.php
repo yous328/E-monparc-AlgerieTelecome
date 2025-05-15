@@ -61,4 +61,26 @@ class Mission extends Model
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
+
+    /**
+     * Scope a query to only include active missions.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'in_progress');
+    }
+
+    /**
+     * Scope a query to only include missions with drivers.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWithDriver($query)
+    {
+        return $query->whereNotNull('driverID')->with('driver.user');
+    }
 }

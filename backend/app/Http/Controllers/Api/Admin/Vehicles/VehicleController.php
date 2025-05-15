@@ -67,11 +67,24 @@ class VehicleController extends Controller
 
         $mapped = $vehicles->getCollection()->map(function ($vehicle) {
 
-            $lastMissionWithDriver = $vehicle->missions()
-                ->whereNotNull('driverID')
-                ->with('driver.user')
-                ->latest('created_at')
-                ->first();
+            $lastMissionWithDriver = null;
+            
+            // For vehicles that are on mission, get the current active mission
+            if ($vehicle->status === 'OnMission') {
+                $lastMissionWithDriver = $vehicle->missions()
+                    ->withDriver()
+                    ->active()
+                    ->latest('created_at')
+                    ->first();
+            }
+            
+            // If we didn't find an active mission, try to get the most recent mission
+            if (!$lastMissionWithDriver) {
+                $lastMissionWithDriver = $vehicle->missions()
+                    ->withDriver()
+                    ->latest('created_at')
+                    ->first();
+            }
 
             return [
                 'id' => $vehicle->vehicleID,
@@ -90,8 +103,18 @@ class VehicleController extends Controller
                 'driver' => $lastMissionWithDriver && $lastMissionWithDriver->driver && $lastMissionWithDriver->driver->user ? [
                     'name' => $lastMissionWithDriver->driver->user->first_name . ' ' . $lastMissionWithDriver->driver->user->last_name,
                     'phone' => $lastMissionWithDriver->driver->user->phone_number,
+                    'status' => $lastMissionWithDriver->driver->status,
                 ] : null,
-
+                'driver_name' => $lastMissionWithDriver && $lastMissionWithDriver->driver && $lastMissionWithDriver->driver->user 
+                    ? $lastMissionWithDriver->driver->user->first_name . ' ' . $lastMissionWithDriver->driver->user->last_name 
+                    : null,
+                'debug_info' => [
+                    'vehicle_status' => $vehicle->status,
+                    'has_mission' => $lastMissionWithDriver ? true : false,
+                    'has_driver' => $lastMissionWithDriver && $lastMissionWithDriver->driver ? true : false,
+                    'has_user' => $lastMissionWithDriver && $lastMissionWithDriver->driver && $lastMissionWithDriver->driver->user ? true : false,
+                    'mission_status' => $lastMissionWithDriver ? $lastMissionWithDriver->status : null,
+                ],
                 'kilometrage' => $vehicle->mileage,
                 'leasing_price' => (float) $vehicle->daily_cost,
                 'technical_status' => [
