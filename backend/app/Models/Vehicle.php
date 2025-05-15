@@ -94,4 +94,8 @@ class Vehicle extends Model
     {
         return $this->hasMany(VehicleUsageHistory::class, 'vehicleID');
     }
+    public function breakdowns()
+    {
+        return $this->hasMany(Breakdown::class, 'vehicleID');
+    }
 }

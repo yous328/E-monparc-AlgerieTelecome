@@ -31,6 +31,8 @@ export default function VehicleDetailPage() {
         }))
     );
 
+    console.log('vehicle: ', vehicle);
+
     return (
         <Layout>
             <div className="p-6 bg-gray-50 min-h-screen">

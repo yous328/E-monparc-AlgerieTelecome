@@ -14,8 +14,21 @@ class VehicleFormDataController extends Controller
 {
     public function index()
     {
+        $brands = VehicleBrand::with('models')->get()->map(function ($brand) {
+            return [
+                'brandID' => $brand->brandID,
+                'name' => $brand->name,
+                'models' => $brand->models->map(function ($model) {
+                    return [
+                        'modelID' => $model->modelID,
+                        'model_name' => $model->model_name,
+                    ];
+                }),
+            ];
+        });
+
         return response()->json([
-            'brands' => VehicleBrand::all(),
+            'brands' => $brands,
             'types' => VehicleType::all(),
             'engines' => EngineType::all(),
             'fuels' => FuelType::all(),

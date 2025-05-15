@@ -49,7 +49,6 @@ export function useFetchVehicles() {
             const vehicles: IVehicle[] = data.data.map((item): IVehicle => ({
                 id: item.id,
                 brand: item.brand,
-                model: item.brand,
                 registration: item.registration_number,
                 brandLogo: item.brand_logo ?? '',
                 status: item.status,

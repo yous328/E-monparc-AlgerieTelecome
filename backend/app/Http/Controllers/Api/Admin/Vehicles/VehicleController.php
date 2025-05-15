@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Api\Admin\Vehicles;
 
 use App\Models\Vehicle;
-use App\Models\Mission;
+use App\Models\VehicleMaintenance;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreVehicleRequest;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
+use App\Models\Breakdown;
 
 class VehicleController extends Controller
 {
@@ -65,8 +66,12 @@ class VehicleController extends Controller
         $vehicles = $query->paginate(8);
 
         $mapped = $vehicles->getCollection()->map(function ($vehicle) {
-            $latestMission = $vehicle->missions->sortByDesc('created_at')->first();
-            $driverName = $latestMission?->driver?->full_name ?? 'Unassigned';
+
+            $lastMissionWithDriver = $vehicle->missions()
+                ->whereNotNull('driverID')
+                ->with('driver.user')
+                ->latest('created_at')
+                ->first();
 
             return [
                 'id' => $vehicle->vehicleID,
@@ -82,7 +87,11 @@ class VehicleController extends Controller
                     'InBreakdown' => 'En Panne',
                     default => 'Indisponible'
                 },
-                'driver_name' => $driverName,
+                'driver' => $lastMissionWithDriver && $lastMissionWithDriver->driver && $lastMissionWithDriver->driver->user ? [
+                    'name' => $lastMissionWithDriver->driver->user->first_name . ' ' . $lastMissionWithDriver->driver->user->last_name,
+                    'phone' => $lastMissionWithDriver->driver->user->phone_number,
+                ] : null,
+
                 'kilometrage' => $vehicle->mileage,
                 'leasing_price' => (float) $vehicle->daily_cost,
                 'technical_status' => [
@@ -102,34 +111,68 @@ class VehicleController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreVehicleRequest $request)
     {
-        $validated = $request->validate([
-            'registration_number' => 'required|unique:vehicles',
-            'brandID' => 'required|exists:vehicle_brands,brandID',
-            'modelID' => 'required|exists:vehicle_models,modelID',
-            'vehicleTypeID' => 'required|exists:vehicle_types,vehicleTypeID',
-            'engineTypeID' => 'required|exists:engine_types,engineTypeID',
-            'fuelTypeID' => 'required|exists:fuel_types,fuelTypeID',
-            'colorID' => 'required|exists:colors,colorID',
-            'status' => 'required|in:Available,OnMission,UnderMaintenance,InBreakdown,Unavailable',
-            'serviceID' => 'required|exists:services,serviceID',
-            'mileage' => 'required|integer',
-            'last_maintenance_date' => 'nullable|date',
-            'next_available_date' => 'nullable|date',
-            'photo' => 'nullable|image',
-        ]);
+        $data = $request->validated();
 
-        if ($request->hasFile('photo')) {
-            $validated['photo'] = $request->file('photo')->store('vehicles', 'public');
+        DB::beginTransaction();
+
+        try {
+            // 1. Store the vehicle
+            $vehicle = Vehicle::create([
+                'vehicleTypeID' => $data['vehicleTypeID'],
+                'brandID' => $data['brandID'],
+                'modelID' => $data['modelID'],
+                'registration_number' => $data['registration_number'],
+                'colorID' => $data['colorID'],
+                'mileage' => $data['mileage'],
+                'engineTypeID' => $data['engineTypeID'],
+                'fuelTypeID' => $data['fuelTypeID'],
+                'serviceID' => $data['serviceID'],
+                'technical_control_date' => $data['technical_control_date'],
+                'insurance_date' => $data['insurance_date'],
+                'status' => $data['status'],
+            ]);
+
+            // 2. Store vehicle maintenance entries
+            foreach ($data['maintenances'] as $item) {
+                VehicleMaintenance::create([
+                    'vehicleID' => $vehicle->vehicleID,
+                    'maintenanceTypeID' => $item['maintenanceTypeID'],
+                    'kilometrage' => $item['kilometrage'] ?? null,
+                    'date' => $item['date'] ?? null,
+                    'interval_km' => $item['interval_km'] ?? null,
+                ]);
+            }
+
+            // 3. Store breakdowns
+            foreach ($data['mechanical_breakdowns'] ?? [] as $bd) {
+                $vehicle->breakdowns()->create([
+                    'breakdownTypeID' => $bd['breakdownTypeID'] ?? 1,
+                    'date' => $bd['date'],
+                    'description' => $bd['description'] ?? null,
+                ]);
+            }
+
+            try {
+                foreach ($data['electrical_breakdowns'] ?? [] as $bd) {
+                    $vehicle->breakdowns()->create([
+                        'breakdownTypeID' => $bd['breakdownTypeID'] ?? 2,
+                        'date' => $bd['date'],
+                        'description' => $bd['description'] ?? null,
+                    ]);
+                }
+            } catch (\Exception $e) {
+                // Handle the exception, log it, or return an error response
+            }
+
+            DB::commit();
+
+            return response()->json(['message' => '✅ Véhicule enregistré avec succès'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => '❌ Erreur serveur: ' . $e->getMessage()], 500);
         }
-
-        $vehicle = Vehicle::create($validated);
-
-        return response()->json([
-            'message' => 'Vehicle created successfully.',
-            'vehicle' => $vehicle
-        ], 201);
     }
 
     public function show($id)
@@ -148,16 +191,32 @@ class VehicleController extends Controller
             'usageHistory',
         ])->findOrFail($id);
 
-        $lastMissionWithDriver = $vehicle->missions()
-            ->whereNotNull('driverID')
-            ->with('driver.user')
-            ->latest('created_at')
-            ->first();
-
-
         $allMissions = $vehicle->missions()
             ->orderByDesc('mission_date')
             ->get();
+
+        $missionCount = $vehicle->missions->count();
+        $mileage = $vehicle->mileage ?? 0;
+        $fuelLevel = $vehicle->fuel_level ?? 0;
+
+        $base = 8000;
+        $mileageFactor = floor($mileage / 1000) * 100;
+        $missionFactor = $missionCount * 300;
+        $fuelBonus = intval(($fuelLevel / 100) * 2000);
+
+        $maxMonthlyConsumption = max(8000, min($base + $mileageFactor + $missionFactor - $fuelBonus, 30000));
+
+        $average = $vehicle->average_consumption ?? 0;
+        $current = $vehicle->current_consumption ?? 0;
+
+
+        $brand = $vehicle->brand?->name;
+        $category = $vehicle->type?->name;
+        $model = $vehicle->model;
+
+        $imagePath = "vehicles/imges/{$brand}/{$category}/{$model}.png";
+        $imageFullPath = storage_path("app/public/" . $imagePath);
+        $imageExists = file_exists($imageFullPath);
 
         return response()->json([
             'id' => $vehicle->vehicleID,
@@ -165,25 +224,24 @@ class VehicleController extends Controller
             'status' => $vehicle->status,
 
             'brand' => [
-                'name' => $vehicle->brand?->name,
+                'name' => $brand,
                 'logo' => $vehicle->brand?->logo,
             ],
 
-            'model' => $vehicle->model?->model_name,
-
-            'image_url' => $vehicle->photo ? asset('storage/' . $vehicle->photo) : null,
-
-            'driver' => $lastMissionWithDriver && $lastMissionWithDriver->driver && $lastMissionWithDriver->driver->user ? [
-                'name' => $lastMissionWithDriver->driver->user->first_name . ' ' . $lastMissionWithDriver->driver->user->last_name,
-                'phone' => $lastMissionWithDriver->driver->user->phone_number,
+            'model' => $vehicle->model ? [
+                'name' => $vehicle->model->model_name,
+                'photo' => $vehicle->model->photo ? asset('storage/' . $vehicle->model->photo) : null,
             ] : null,
 
-            'consumption' => $vehicle->consumption ?? [
-                'average' => $vehicle->average_consumption ?? 0,
-                'current' => $vehicle->current_consumption ?? 0,
+            'consumption' => [
+                'average' => $average,
+                'current' => $current,
+                'average_percent' => $maxMonthlyConsumption > 0 ? round(($average / $maxMonthlyConsumption) * 100) : 0,
+                'current_percent' => $maxMonthlyConsumption > 0 ? round(($current / $maxMonthlyConsumption) * 100) : 0,
+                'max_estimated' => $maxMonthlyConsumption,
             ],
 
-            'fuel_level' => $vehicle->fuel_level ?? 0,
+            'fuel_level' => $fuelLevel,
 
             'insurance' => [
                 'type' => $vehicle->insurance?->insurance_type ?? 'Néant',
@@ -255,5 +313,10 @@ class VehicleController extends Controller
             'monthly_kilometrage' => $vehicle->monthly_kilometrage ?? [],
             'mission_stats' => $vehicle->mission_stats ?? [],
         ]);
+    }
+
+    public function breakdowns()
+    {
+        return $this->hasMany(Breakdown::class, 'vehicleID');
     }
 }

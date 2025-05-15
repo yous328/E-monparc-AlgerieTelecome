@@ -12,7 +12,7 @@ Route::middleware(['auth:sanctum', 'role:Admin'])
     ->prefix('admin/vehicles')
     ->group(function () {
         Route::get('/', [VehicleController::class, 'index']);
-        Route::post('/', [VehicleController::class, 'store']);
+        Route::post('/add', [VehicleController::class, 'store']);
         Route::get('/form/data', [VehicleFormDataController::class, 'index']);
         Route::get('/{id}', [VehicleController::class, 'show']);
         Route::get('/{id}/maintenance', [VehicleMaintenanceController::class, 'show']);

@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\MissionType;
-use App\Models\Vehicle;
 use Illuminate\Database\Seeder;
+use App\Models\MaintenanceType;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,9 +16,10 @@ class DatabaseSeeder extends Seeder
             FuelTypeSeeder::class,
             VehicleTypeSeeder::class,
             ColorSeeder::class,
-            VehicleBrandSeeder::class,
-            VehicleMaintenanceSeeder::class,
+            VehicleModelBrandTypeSeeder::class,
+            MaintenanceTypesTableSeeder::class,
             EngineTypeSeeder::class,
+            BreakdownTypeSeeder::class,
             VehicleSeeder::class,
             ManagerSeeder::class,
             LicenseTypeSeeder::class,

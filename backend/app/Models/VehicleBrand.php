@@ -18,4 +18,8 @@ class VehicleBrand extends Model
     {
         return $this->hasMany(Vehicle::class, 'brandID');
     }
+    public function models()
+    {
+        return $this->hasMany(\App\Models\VehicleModel::class, 'brandID', 'brandID');
+    }
 }

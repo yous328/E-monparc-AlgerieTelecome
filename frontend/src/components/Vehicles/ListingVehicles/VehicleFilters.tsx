@@ -1,3 +1,6 @@
+import { useNavigate } from "react-router-dom";
+import React from "react";
+
 interface VehiclesFiltersProps {
     filters: {
         type: string;
@@ -12,12 +15,19 @@ interface VehiclesFiltersProps {
 }
 
 export function VehiclesFilters({ filters, setFilters }: VehiclesFiltersProps) {
+    const navigate = useNavigate();
+
+    const handleFilterChange = (key: keyof typeof filters, value: string) => {
+        setFilters((prev) => ({ ...prev, [key]: value }));
+    };
+
     return (
         <div className="flex flex-wrap items-center gap-4 mb-6">
             <select
                 value={filters.type}
-                onChange={(e) => setFilters((prev) => ({ ...prev, type: e.target.value }))}
+                onChange={(e) => handleFilterChange("type", e.target.value)}
                 className="px-12 py-2 rounded border bg-[#edf1f0] text-sm text-gray-700 shadow-sm"
+                aria-label="Filtrer par Type"
             >
                 <option value="">Filtrer par Type</option>
                 <option value="van">Van</option>
@@ -27,27 +37,33 @@ export function VehiclesFilters({ filters, setFilters }: VehiclesFiltersProps) {
 
             <select
                 value={filters.status}
-                onChange={(e) => setFilters((prev) => ({ ...prev, status: e.target.value }))}
-                className="px-12 py-2 rounded border bg-[#edf1f0]  text-sm text-gray-700 shadow-sm"
+                onChange={(e) => handleFilterChange("status", e.target.value)}
+                className="px-12 py-2 rounded border bg-[#edf1f0] text-sm text-gray-700 shadow-sm"
+                aria-label="Filtrer par Statut"
             >
                 <option value="">Filtrer par Statut</option>
-                <option value="Disponible">Disponible</option>
-                <option value="Occupé">En Mission</option>
-                <option value="En Panne">En Panne</option>
+                <option value="Available">Disponible</option>
+                <option value="OnMission">En Mission</option>
+                <option value="InBreakdown">En Panne</option>
+                <option value="Unavailable">Indisponible</option>
             </select>
 
             <select
                 value={filters.assignment}
-                onChange={(e) => setFilters((prev) => ({ ...prev, assignment: e.target.value }))}
+                onChange={(e) => handleFilterChange("assignment", e.target.value)}
                 className="px-8 py-2 rounded border bg-[#edf1f0] text-sm text-gray-700 shadow-sm"
+                aria-label="Filtrer par Affectation"
             >
                 <option value="">Filtrer par Affectation</option>
-                <option value="affecté">Affecté</option>
-                <option value="non_affecté">Non Affecté</option>
+                <option value="assigned">Affecté</option>
+                <option value="unassigned">Non Affecté</option>
             </select>
 
             <div className="ml-auto">
-                <button className="px-4 py-2 bg-[#edf1f0] border text-black rounded shadow-md hover:bg-blue-50 font-semibold text-sm">
+                <button
+                    onClick={() => navigate("/vehicles/add")}
+                    className="px-4 py-2 bg-[#edf1f0] border text-black rounded shadow-md hover:bg-blue-50 font-semibold text-sm"
+                >
                     + Ajouter Nouveau Véhicule
                 </button>
             </div>

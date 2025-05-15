@@ -14,23 +14,11 @@ return new class extends Migration
         Schema::create('vehicle_maintenances', function (Blueprint $table) {
             $table->id('maintenanceID');
             $table->foreignId('vehicleID')->constrained('vehicles', 'vehicleID')->onDelete('cascade');
+            $table->foreignId('maintenanceTypeID')->constrained('maintenance_types', 'maintenanceTypeID')->onDelete('cascade');
 
-            // Maintenance Items
-            $table->integer('oil_km')->nullable();
-            $table->date('oil_date')->nullable();
-            $table->integer('oil_interval')->nullable();
-
-            $table->integer('battery_km')->nullable();
-            $table->date('battery_date')->nullable();
-            $table->integer('battery_interval')->nullable();
-
-            $table->integer('spark_plugs_km')->nullable();
-            $table->date('spark_plugs_date')->nullable();
-            $table->integer('spark_plugs_interval')->nullable();
-
-            $table->integer('tires_km')->nullable();
-            $table->date('tires_date')->nullable();
-            $table->integer('tires_interval')->nullable();
+            $table->integer('kilometrage')->nullable();
+            $table->date('date')->nullable();
+            $table->integer('interval_km')->nullable();
 
             $table->timestamps();
         });

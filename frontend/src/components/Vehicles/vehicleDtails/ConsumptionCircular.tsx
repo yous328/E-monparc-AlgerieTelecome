@@ -1,18 +1,19 @@
-
 import ReactApexChart from 'react-apexcharts';
 
 interface ConsumptionCircularProps {
     average: number;
     current: number;
+    averagePercent: number;
+    currentPercent: number;
 }
 
-export const ConsumptionCircular = ({ average, current }: ConsumptionCircularProps) => {
-    const total = 10000;
-
-    const avgPercent = Math.round((average / total) * 100);
-    const currentPercent = Math.round((current / total) * 100);
-
-    const series = [avgPercent, currentPercent];
+export const ConsumptionCircular = ({
+    average,
+    current,
+    averagePercent,
+    currentPercent,
+}: ConsumptionCircularProps) => {
+    const series = [averagePercent, currentPercent];
 
     const options: ApexCharts.ApexOptions = {
         chart: {
@@ -32,10 +33,9 @@ export const ConsumptionCircular = ({ average, current }: ConsumptionCircularPro
                 },
                 dataLabels: {
                     show: false,
-                }
+                },
             },
         },
-        
         colors: ['#304ff2', '#3eb7f8'],
         stroke: {
             lineCap: 'round',
@@ -45,8 +45,6 @@ export const ConsumptionCircular = ({ average, current }: ConsumptionCircularPro
 
     return (
         <div className="bg-[#EAEFED] px-4 py-2 rounded">
-            
-
             <ReactApexChart
                 options={options}
                 series={series}
@@ -57,11 +55,11 @@ export const ConsumptionCircular = ({ average, current }: ConsumptionCircularPro
             <div className="flex justify-around mt-4 text-xs text-gray-700">
                 <span className="flex items-center gap-1">
                     <span className="inline-block w-2 h-2 rounded-full bg-[#304ff2]"></span>
-                    <strong>{average.toFixed(0)}</strong> da (Cons Moy)
+                    <strong>{Number(average).toFixed(0)}</strong> da (Cons Moy)
                 </span>
                 <span className="flex items-center gap-1">
                     <span className="inline-block w-2 h-2 rounded-full bg-[#3eb7f8]"></span>
-                    <strong>{current.toFixed(0)}</strong> da (Cons Act)
+                    <strong>{Number(current).toFixed(0)}</strong> da (Cons Act)
                 </span>
             </div>
         </div>

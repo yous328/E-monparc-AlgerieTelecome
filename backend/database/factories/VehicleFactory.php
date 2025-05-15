@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Vehicle;
-use App\Models\VehicleBrand;
 use App\Models\VehicleModel;
 use App\Models\VehicleType;
 use App\Models\EngineType;
@@ -15,6 +14,8 @@ use App\Models\VehicleInsurance;
 use App\Models\TechnicalControl;
 use App\Models\VehicleTechnicalStatus;
 use App\Models\VehicleUsageHistory;
+use App\Models\MaintenanceType;
+use App\Models\VehicleMaintenance;
 
 class VehicleFactory extends Factory
 {
@@ -24,8 +25,10 @@ class VehicleFactory extends Factory
     {
         $faker = $this->faker;
 
-        $brand = VehicleBrand::inRandomOrder()->first() ?? VehicleBrand::factory()->create();
-        $model = VehicleModel::inRandomOrder()->first() ?? VehicleModel::factory()->create();
+        $model = VehicleModel::inRandomOrder()->first();
+        $brand = $model->brand;
+        $type = $model->type;
+
         $fuelType = FuelType::inRandomOrder()->first() ?? FuelType::factory()->create();
         $engine = EngineType::inRandomOrder()->first() ?? EngineType::factory()->create([
             'name' => 'Hybrid',
@@ -47,20 +50,11 @@ class VehicleFactory extends Factory
 
         $missionStats = collect($months)->map(fn($m) => ['month' => $m, 'mission' => rand(0, 30)]);
 
-        // Vehicle image
-        $vehicleImage = $faker->image(
-            storage_path('app/public/vehicles/images'),
-            640, // width
-            480, // height
-            'transport', // category
-            false // don't return base64
-        );
-
         return [
             'registration_number' => strtoupper($faker->unique()->bothify('####-???-##')),
             'brandID' => $brand->brandID,
             'modelID' => $model->modelID,
-            'vehicleTypeID' => VehicleType::inRandomOrder()->value('vehicleTypeID') ?? VehicleType::factory()->create()->vehicleTypeID,
+            'vehicleTypeID' => $faker->boolean(80) ? $type->vehicleTypeID : VehicleType::inRandomOrder()->value('vehicleTypeID'),
             'engineTypeID' => $engine->engineTypeID,
             'fuelTypeID' => $fuelType->fuelTypeID,
             'colorID' => Color::inRandomOrder()->value('colorID') ?? Color::factory()->create()->colorID,
@@ -68,28 +62,34 @@ class VehicleFactory extends Factory
             'status' => $faker->randomElement(['Available', 'OnMission', 'UnderMaintenance']),
             'mileage' => $faker->numberBetween(10000, 200000),
             'fuel_level' => $faker->randomFloat(1, 0, 100),
-            'average_consumption' => $faker->randomFloat(2, 500, 15000),
-            'current_consumption' => $faker->randomFloat(2, 500, 15000),
-            'cost_per_km' => $faker->randomFloat(2, 0.5, 1.5),
-            'daily_cost' => $faker->randomFloat(2, 10, 100),
+            'average_consumption' => $faker->randomFloat(2, 9000, 25000),
+            'current_consumption' => $faker->randomFloat(2, 3000, 20000),
+            'cost_per_km' => $faker->randomFloat(2, 8, 16),
+            'daily_cost' => $faker->randomFloat(2, 500, 3000),
             'vehicleInsuranceID' => $insurance->vehicleInsuranceID,
             'technicalControlID' => $control->technicalControlID,
             'last_maintenance_date' => $faker->date(),
             'next_available_date' => $faker->date(),
-            'photo' => 'vehicles/images/' . basename($vehicleImage),
-
             'monthly_kilometrage' => $monthlyKilometrage,
             'mission_stats' => $missionStats,
-            'consumption' => [
-                'average' => 6000,
-                'current' => 1500
-            ],
         ];
     }
 
     public function configure()
     {
         return $this->afterCreating(function (Vehicle $vehicle) {
+            // Create maintenance records for the vehicle
+            $maintenanceTypes = MaintenanceType::inRandomOrder()->take(3)->get();
+            foreach ($maintenanceTypes as $maintenanceType) {
+                VehicleMaintenance::create([
+                    'vehicleID' => $vehicle->vehicleID,
+                    'maintenanceTypeID' => $maintenanceType->maintenanceTypeID,
+                    'kilometrage' => $this->faker->numberBetween(1000, 100000),
+                    'date' => $this->faker->date(),
+                    'interval_km' => $this->faker->numberBetween(5000, 20000),
+                ]);
+            }
+
             VehicleTechnicalStatus::factory()->create(['vehicleID' => $vehicle->vehicleID]);
             VehicleUsageHistory::factory()->count(3)->create(['vehicleID' => $vehicle->vehicleID]);
         });

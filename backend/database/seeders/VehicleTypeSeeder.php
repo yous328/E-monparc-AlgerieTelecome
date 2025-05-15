@@ -9,11 +9,10 @@ class VehicleTypeSeeder extends Seeder
 {
     public function run(): void
     {
-        $types = ['City Car', 'Sedan', 'SUV', 'Van', 'Pickup', '4x4'];
+        $types = ['Hatchback', 'Sedan', 'SUV', 'Van', 'Electric'];
 
         foreach ($types as $type) {
             VehicleType::firstOrCreate(['name' => $type]);
         }
     }
 }
-

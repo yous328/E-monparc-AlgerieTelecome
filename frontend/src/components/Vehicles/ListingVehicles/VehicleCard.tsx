@@ -1,4 +1,4 @@
-import { IVehicle } from '../../interfaces/Vehicle/IVehicle';
+import { IVehicle } from '../../../interfaces/Vehicle/IVehicle';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
 import BuildIcon from '@mui/icons-material/Build';
@@ -38,9 +38,9 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
         <p className="text-lg font-bold">{vehicle.registration}</p>
       </div>
 
-      {/* Image */}
+      {/* Logo */}
       <div className="mb-4 flex justify-center">
-        <div className="h-16 w-16 bg-white rounded shadow flex items-center justify-center p-1">
+        <div className="h-32 w-64  flex items-center justify-center p-1">
           <img
             src={vehicle.brandLogo || '/fallback-vehicle.png'}
             alt={`${vehicle.brand} logo`}

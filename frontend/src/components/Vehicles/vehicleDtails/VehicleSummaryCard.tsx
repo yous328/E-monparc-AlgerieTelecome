@@ -1,5 +1,3 @@
-// src/components/Vehicles/vehicleDtails/summary/VehicleSummaryCard.tsx
-
 import { IVehicleDetail } from '../../../interfaces/Vehicle/IvehicleDetail';
 import { FuelGaugeChart } from './FuelGaugeChart';
 import { ConsumptionCircular } from './ConsumptionCircular';
@@ -13,7 +11,7 @@ export const VehicleSummaryCard = ({ vehicle }: VehicleSummaryCardProps) => {
         <div className="bg-[#EAEFED] p-6 rounded-xl shadow w-full">
             {/* 1. Brand Title */}
             <h2 className="text-lg font-bold text-gray-700">
-                {vehicle.brand.name?.toUpperCase()}{' '}{vehicle.model?.toUpperCase()}
+                {vehicle.brand.name?.toUpperCase()} {vehicle.model.name?.toUpperCase()}
             </h2>
             <p className="text-[16px] font-bold text-gray-700 mb-4">
                 {vehicle.registration?.toUpperCase()}
@@ -26,8 +24,8 @@ export const VehicleSummaryCard = ({ vehicle }: VehicleSummaryCardProps) => {
                     {/* Vehicle Image */}
                     <div className="mb-4">
                         <img
-                            src={vehicle.image_url}
-                            alt="Vehicle"
+                            src={vehicle.model.photo}
+                            alt={`${vehicle.brand.name} ${vehicle.model.name}`}
                             style={{ width: '300px', height: '150px', objectFit: 'contain' }}
                         />
                     </div>
@@ -66,20 +64,19 @@ export const VehicleSummaryCard = ({ vehicle }: VehicleSummaryCardProps) => {
                             Signaler Une Panne
                         </button>
                     </div>
-
-
-
                 </div>
 
                 {/* RIGHT COLUMN */}
                 <div className="grid grid-cols-1 gap-6">
                     {/* Fuel Gauge */}
-                    <FuelGaugeChart value={parseFloat(vehicle.fuel_level)} />
+                    <FuelGaugeChart value={parseFloat(vehicle.fuel_level ?? '0')} />
 
                     {/* Consumption Circular */}
                     <ConsumptionCircular
-                        average={parseFloat(vehicle.consumption.average)}
-                        current={parseFloat(vehicle.consumption.current)}
+                        average={parseFloat(vehicle.consumption.average.toString())}
+                        current={parseFloat(vehicle.consumption.current.toString())}
+                        averagePercent={vehicle.consumption.average_percent}
+                        currentPercent={vehicle.consumption.current_percent}
                     />
                 </div>
             </div>

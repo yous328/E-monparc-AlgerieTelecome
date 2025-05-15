@@ -13,18 +13,10 @@ class VehicleMaintenance extends Model
 
     protected $fillable = [
         'vehicleID',
-        'oil_km',
-        'oil_date',
-        'oil_interval',
-        'battery_km',
-        'battery_date',
-        'battery_interval',
-        'spark_plugs_km',
-        'spark_plugs_date',
-        'spark_plugs_interval',
-        'tires_km',
-        'tires_date',
-        'tires_interval',
+        'maintenanceTypeID',
+        'kilometrage',
+        'date',
+        'interval_km',
     ];
 
     public function vehicle()
@@ -32,8 +24,8 @@ class VehicleMaintenance extends Model
         return $this->belongsTo(Vehicle::class, 'vehicleID');
     }
 
-    public function components()
+    public function type()
     {
-        return $this->hasMany(MaintenanceComponent::class, 'maintenanceID');
+        return $this->belongsTo(MaintenanceType::class, 'maintenanceTypeID');
     }
 }

@@ -7,6 +7,8 @@ import VehicleDetailPage from '../pages/vehicles/VehicleDetailPage';
 import AddVehicle from '../pages/vehicles/AddVehicle';
 import { ProtectedRoute } from '../components/utils/ProtectedRoute';
 import { DashboardProvider } from '../context/Dashboard/DashboardProvider';
+import { VehicleFormProvider } from '../context/vehicle/AddVehicle/VehicleFormProvider';
+
 
 export function AppRouter() {
     return (
@@ -54,7 +56,9 @@ export function AppRouter() {
                 element={
                     <ProtectedRoute>
                         <DashboardProvider>
-                            <AddVehicle />
+                            <VehicleFormProvider>
+                                <AddVehicle />
+                            </VehicleFormProvider>
                         </DashboardProvider>
                     </ProtectedRoute>
                 }

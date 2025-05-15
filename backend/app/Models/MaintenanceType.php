@@ -3,18 +3,21 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class MaintenanceType extends Model
 {
-    protected $primaryKey = 'typeID';
+    use HasFactory;
+
+    protected $primaryKey = 'maintenanceTypeID';
 
     protected $fillable = [
         'name',
         'default_interval_km',
     ];
 
-    public function components()
+    public function maintenances()
     {
-        return $this->hasMany(MaintenanceComponent::class, 'typeID');
+        return $this->hasMany(VehicleMaintenance::class, 'maintenanceTypeID');
     }
 }
