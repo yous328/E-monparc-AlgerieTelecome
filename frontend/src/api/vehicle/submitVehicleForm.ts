@@ -1,5 +1,5 @@
 import api from '../../lib/axios';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 import { VehicleFormData } from "../../context/vehicle/AddVehicle/VehicleFormData";
 
 export const submitVehicleForm = async (formData: VehicleFormData) => {
