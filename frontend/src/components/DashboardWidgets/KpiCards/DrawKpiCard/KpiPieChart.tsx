@@ -26,12 +26,12 @@ export const KpiPieChart: FC<Props> = ({ data, centerText, unit }) => {
             <div className="relative w-full h-full max-w-[120px] max-h-[120px]">
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
-                        <Pie
+                    <Pie
                             data={chartData}
-                            dataKey="value"
-                            nameKey="label"
-                            cx="50%"
-                            cy="50%"
+                        dataKey="value"
+                        nameKey="label"
+                        cx="50%"
+                        cy="50%"
                             startAngle={90}
                             endAngle={-270}
                             innerRadius="70%"
@@ -39,16 +39,16 @@ export const KpiPieChart: FC<Props> = ({ data, centerText, unit }) => {
                             paddingAngle={2}
                             cornerRadius={3}
                             strokeWidth={0}
-                        >
+                    >
                             {chartData.map((entry, index) => (
                                 <Cell 
                                     key={`cell-${index}`} 
                                     fill={entry.color} 
                                     stroke="none"
                                 />
-                            ))}
-                        </Pie>
-                    </PieChart>
+                        ))}
+                    </Pie>
+                </PieChart>
                 </ResponsiveContainer>
 
                 {/* Center text */}

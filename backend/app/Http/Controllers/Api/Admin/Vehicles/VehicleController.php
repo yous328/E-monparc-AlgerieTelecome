@@ -222,7 +222,7 @@ class VehicleController extends Controller
         $mileage = $vehicle->mileage ?? 0;
         $fuelLevel = $vehicle->fuel_level ?? 0;
 
-        $base = 8000;
+        $base = 25000;
         $mileageFactor = floor($mileage / 1000) * 100;
         $missionFactor = $missionCount * 300;
         $fuelBonus = intval(($fuelLevel / 100) * 2000);
@@ -237,7 +237,7 @@ class VehicleController extends Controller
         $category = $vehicle->type?->name;
         $model = $vehicle->model;
 
-        $imagePath = "vehicles/imges/{$brand}/{$category}/{$model}.png";
+        $imagePath = "vehicles/images/{$brand}/{$category}/{$model}.png";
         $imageFullPath = storage_path("app/public/" . $imagePath);
         $imageExists = file_exists($imageFullPath);
 

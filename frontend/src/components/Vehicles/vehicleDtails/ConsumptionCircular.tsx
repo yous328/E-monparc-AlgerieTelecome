@@ -13,12 +13,27 @@ export const ConsumptionCircular = ({
     averagePercent,
     currentPercent,
 }: ConsumptionCircularProps) => {
-    const series = [averagePercent, currentPercent];
+    // Validate and sanitize percentage values
+    const safeAveragePercent = isNaN(averagePercent) ? 0 : 
+                              averagePercent < 0 ? 0 : 
+                              averagePercent > 100 ? 100 : 
+                              averagePercent;
+    
+    const safeCurrentPercent = isNaN(currentPercent) ? 0 : 
+                              currentPercent < 0 ? 0 : 
+                              currentPercent > 100 ? 100 : 
+                              currentPercent;
+    
+    // Validate and format display values
+    const safeAverage = isNaN(average) ? 0 : average;
+    const safeCurrent = isNaN(current) ? 0 : current;
+    
+    const series = [safeAveragePercent, safeCurrentPercent];
 
     const options: ApexCharts.ApexOptions = {
         chart: {
             type: 'radialBar',
-            height: 300,
+            height: 240,
         },
         plotOptions: {
             radialBar: {
@@ -43,23 +58,32 @@ export const ConsumptionCircular = ({
         labels: ['Cons Moy', 'Cons Act'],
     };
 
-    return (
-        <div className="bg-[#EAEFED] px-4 py-2 rounded">
-            <ReactApexChart
-                options={options}
-                series={series}
-                type="radialBar"
-                height={250}
-            />
+    // Check if we have valid data to display
+    const hasValidData = !series.every(val => val === 0 || isNaN(val));
 
-            <div className="flex justify-around mt-4 text-xs text-gray-700">
+    return (
+        <div className="px-2 py-1 rounded">
+            {hasValidData ? (
+                <ReactApexChart
+                    options={options}
+                    series={series}
+                    type="radialBar"
+                    height={220}
+                />
+            ) : (
+                <div className="flex justify-center items-center h-[200px]">
+                    <p className="text-sm text-gray-500">Données de consommation non disponibles</p>
+                </div>
+            )}
+
+            <div className="flex justify-around mt-2 text-xs text-gray-700">
                 <span className="flex items-center gap-1">
                     <span className="inline-block w-2 h-2 rounded-full bg-[#304ff2]"></span>
-                    <strong>{Number(average).toFixed(0)}</strong> da (Cons Moy)
+                    <strong>{Number(safeAverage).toFixed(0)}</strong> da (Cons Moy)
                 </span>
                 <span className="flex items-center gap-1">
                     <span className="inline-block w-2 h-2 rounded-full bg-[#3eb7f8]"></span>
-                    <strong>{Number(current).toFixed(0)}</strong> da (Cons Act)
+                    <strong>{Number(safeCurrent).toFixed(0)}</strong> da (Cons Act)
                 </span>
             </div>
         </div>

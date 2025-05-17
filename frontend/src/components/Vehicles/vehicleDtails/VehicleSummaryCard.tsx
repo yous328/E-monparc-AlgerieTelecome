@@ -2,12 +2,33 @@ import { IVehicleDetail } from '../../../interfaces/Vehicle/IvehicleDetail';
 import { FuelGaugeChart } from './FuelGaugeChart';
 import { ConsumptionCircular } from './ConsumptionCircular';
 import { MoreVertical } from 'lucide-react';
+import { useState } from 'react';
 
 interface VehicleSummaryCardProps {
     vehicle: IVehicleDetail;
 }
 
 export const VehicleSummaryCard = ({ vehicle }: VehicleSummaryCardProps) => {
+    const [imageError, setImageError] = useState(false);
+    
+    // Using the existing fallback image in public directory
+    const placeholderImage = '/fallback-vehicle.png';
+    
+    // Handle image loading errors
+    const handleImageError = () => {
+        console.log('Image failed to load:', vehicle.model?.photo);
+        setImageError(true);
+    };
+
+    // Get image source with proper error handling
+    const getImageSource = () => {
+        if (imageError || !vehicle.model?.photo) {
+            return placeholderImage;
+        }
+        
+        return vehicle.model.photo;
+    };
+
     return (
         <div className="bg-white rounded-lg shadow w-full overflow-hidden">
             {/* Header with Brand Title and More Options */}
@@ -30,11 +51,12 @@ export const VehicleSummaryCard = ({ vehicle }: VehicleSummaryCardProps) => {
                 {/* LEFT COLUMN */}
                 <div className="flex flex-col items-center space-y-4">
                     {/* Vehicle Image */}
-                    <div className="mb-2">
+                    <div className="mb-2 bg-gray-50 rounded w-64 h-40 flex items-center justify-center">
                         <img
-                            src={vehicle.model.photo}
+                            src={getImageSource()}
                             alt={`${vehicle.brand.name} ${vehicle.model.name}`}
-                            className="w-64 h-40 object-contain"
+                            className="w-full h-full object-contain p-2"
+                            onError={handleImageError}
                         />
                     </div>
 

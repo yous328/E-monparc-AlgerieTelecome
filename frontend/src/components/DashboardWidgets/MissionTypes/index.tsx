@@ -64,8 +64,8 @@ export function MissionTypesChart() {
         hollow: {
           size: '35%'
         }
+        },
       },
-    },
     stroke: {
       lineCap: 'round'
     },

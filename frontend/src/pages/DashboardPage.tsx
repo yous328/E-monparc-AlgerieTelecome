@@ -21,18 +21,18 @@ export function DashboardPage() {
     return (
         <Layout>
             <div className="px-4 py-6 md:px-6 max-w-screen-2xl mx-auto bg-gray-50">
-                {/* KPI Cards (Vehicles, Drivers, Missions) */}
-                <KpiCardsGroup />
+            {/* KPI Cards (Vehicles, Drivers, Missions) */}
+            <KpiCardsGroup />
 
-                {/* Charts */}
+            {/* Charts */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mt-6 md:mt-8">
-                    <MissionTypesChart />
-                    <MissionRealisation />
-                </div>
+                <MissionTypesChart />
+                <MissionRealisation />
+            </div>
 
-                {/* Mission Table */}
+            {/* Mission Table */}
                 <div className="mt-6 md:mt-8">
-                    <MissionInProgressTable />
+                <MissionInProgressTable />
                 </div>
             </div>
         </Layout>

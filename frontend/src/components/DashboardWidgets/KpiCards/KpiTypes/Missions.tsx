@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkedAlt } from '@fortawesome/free-solid-svg-icons';
+import { faMapLocation } from '@fortawesome/free-solid-svg-icons';
 import { KpiCard } from '../DrawKpiCard/KpiCard';
 import { useKpiCards } from '../../../../context/Dashboard/KpiCards/useKpiCards';
 import { calculatePercentage } from '../../../../utils/calculatePercentage';
@@ -13,13 +13,13 @@ export function MissionsCard() {
     return (
         <KpiCard
             title="Missions"
-            icon={<FontAwesomeIcon icon={faMapMarkedAlt} className="text-blue-500" size="2x" />}
+            icon={<FontAwesomeIcon icon={faMapLocation} className="text-blue-700" size="2x" />}
             value={total}
             unit="Missions"
             segments={[
                 { label: 'Annulée', value: calculatePercentage(cancelled, total), color: '#3399FF' },
-                { label: 'En cours', value: calculatePercentage(in_progress, total), color: '#66CCFF' },
-                { label: 'Planifiée', value: calculatePercentage(planned, total), color: '#000066' }
+                { label: 'E-cour', value: calculatePercentage(in_progress, total), color: '#66CCFF' },
+                { label: 'Programmé', value: calculatePercentage(planned, total), color: '#000066' }
             ]}
             bgColor="#EAEFED"
         />

@@ -44,7 +44,7 @@ export function MissionInProgressTable() {
                 <div className="inline-block min-w-full align-middle p-4 md:p-0">
                     <table className="min-w-full text-xs md:text-sm text-left text-gray-700">
                         <thead className="bg-white rounded-md">
-                            <tr className="text-gray-600 font-semibold">
+                        <tr className="text-gray-600 font-semibold">
                                 <th className="p-2 md:p-3 whitespace-nowrap rounded-l-md">
                                     <input 
                                         type="checkbox" 
@@ -60,10 +60,10 @@ export function MissionInProgressTable() {
                                 <th className="p-2 md:p-3 whitespace-nowrap">Arrivé</th>
                                 <th className="p-2 md:p-3 whitespace-nowrap">Localisation</th>
                                 <th className="p-2 md:p-3 text-right whitespace-nowrap rounded-r-md">Progress</th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-[#F1F5F4]">
-                            {missionsData.map((mission, index) => (
+                        </tr>
+                    </thead>
+                    <tbody className="bg-[#F1F5F4]">
+                        {missionsData.map((mission, index) => (
                                 <tr key={index} className="border-t border-gray-100 hover:bg-[#E9F0ED] transition-colors">
                                     <td className="p-2 md:p-3">
                                         <input 
@@ -72,7 +72,7 @@ export function MissionInProgressTable() {
                                             checked={selectedMissions.includes(index)}
                                             onChange={() => toggleSelectMission(index)}
                                         />
-                                    </td>
+                                </td>
                                     <td className="p-2 md:p-3 whitespace-nowrap">{mission.vehicle}</td>
                                     <td className="p-2 md:p-3 whitespace-nowrap">{mission.driver}</td>
                                     <td className="p-2 md:p-3 whitespace-nowrap">{mission.type}</td>
@@ -81,20 +81,20 @@ export function MissionInProgressTable() {
                                     <td className="p-2 md:p-3 whitespace-nowrap">{mission.localization}</td>
                                     <td className="p-2 md:p-3 text-right w-28 md:w-36">
                                         <div className="relative w-full bg-white h-2 md:h-3 rounded-full overflow-hidden shadow-inner">
-                                            <div
+                                        <div
                                                 className="absolute top-0 left-0 h-full bg-blue-600 rounded-full"
-                                                style={{ width: `${mission.progress}%` }}
-                                            >
-                                            </div>
+                                            style={{ width: `${mission.progress}%` }}
+                                        >
+                                        </div>
                                             <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[9px] text-gray-600 font-medium">
                                                 {mission.progress}%
                                             </span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
                 </div>
             </div>
         </div>
