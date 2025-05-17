@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             DriverSeeder::class,
             EmployeeSeeder::class,
             MissionTypeSeeder::class,
+            MissionObjectiveSeeder::class,
             MissionSeeder::class,
             MissionPlanSeeder::class,
             EmployeeAccompanimentSeeder::class,

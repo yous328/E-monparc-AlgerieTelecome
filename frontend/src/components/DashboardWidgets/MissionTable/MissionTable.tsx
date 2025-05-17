@@ -1,10 +1,12 @@
 import { useMissionTableContext } from '../../../context/Dashboard/Missions/MissionTable/useMissionTableContext';
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export function MissionInProgressTable() {
     const { missionsData, loading } = useMissionTableContext();
     const [selectedMissions, setSelectedMissions] = useState<number[]>([]);
+    const navigate = useNavigate();
 
     const toggleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.checked) {
@@ -22,6 +24,10 @@ export function MissionInProgressTable() {
         }
     };
 
+    const handleAddMission = () => {
+        navigate('/missions/add');
+    };
+
     if (loading) {
         return (
             <div className="bg-[#EAEFED] rounded-lg p-4 md:p-6 shadow-md flex items-center justify-center h-32">
@@ -34,7 +40,10 @@ export function MissionInProgressTable() {
         <div className="bg-[#EAEFED] rounded-lg shadow-md p-4 md:p-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3 sm:gap-0">
                 <h2 className="text-base md:text-lg font-bold text-gray-800">Mission En Cours</h2>
-                <button className="flex items-center gap-2 text-xs sm:text-sm bg-white border border-blue-500 text-blue-500 px-3 py-1.5 rounded-md hover:bg-blue-50 transition-colors shadow-sm">
+                <button 
+                    className="flex items-center gap-2 text-xs sm:text-sm bg-white border border-blue-500 text-blue-500 px-3 py-1.5 rounded-md hover:bg-blue-50 transition-colors shadow-sm"
+                    onClick={handleAddMission}
+                >
                     <Plus size={16} />
                     <span>Ajouter Une Mission</span>
                 </button>

@@ -8,7 +8,9 @@ import AddVehicle from '../pages/vehicles/AddVehicle';
 import { ProtectedRoute } from '../components/utils/ProtectedRoute';
 import { DashboardProvider } from '../context/Dashboard/DashboardProvider';
 import { VehicleFormProvider } from '../context/vehicle/AddVehicle/VehicleFormProvider';
-
+import MissionDashboardPage from '../pages/MissionDashboardPage';
+import AddMissionPage from '../pages/AddMissionPage';
+import { MissionProvider } from '../context/mission/MissionProvider';
 
 export function AppRouter() {
     return (
@@ -59,6 +61,33 @@ export function AppRouter() {
                             <VehicleFormProvider>
                                 <AddVehicle />
                             </VehicleFormProvider>
+                        </DashboardProvider>
+                    </ProtectedRoute>
+                }
+            />
+
+            {/* Mission Routes */}
+            <Route
+                path="/missions"
+                element={
+                    <ProtectedRoute>
+                        <DashboardProvider>
+                            <MissionProvider>
+                                <MissionDashboardPage />
+                            </MissionProvider>
+                        </DashboardProvider>
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/missions/add"
+                element={
+                    <ProtectedRoute>
+                        <DashboardProvider>
+                            <MissionProvider>
+                                <AddMissionPage />
+                            </MissionProvider>
                         </DashboardProvider>
                     </ProtectedRoute>
                 }
